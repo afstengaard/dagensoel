@@ -1,0 +1,42 @@
+@startuml
+enum VoteType {
+    FIRST_FAVORITE
+    SECOND_FAVORITE
+}
+
+class User {
+    +Long id
+    +String name
+    +String email
+    +String passwordHash
+    +Role role
+}
+
+class Competition {
+    +Long id
+    +int year
+    +Boolean active
+    +String accessCode
+}
+
+class Beer {
+    +Long id
+    +String name
+    +int firstReleasedYear
+    +String countryOfOrigin
+    +String description
+}
+
+class Vote {
+    +Long id
+    +VoteType voteType
+    +String sessionId
+}
+
+' Relationships with labels
+User "1" -- "*" Competition : manages >
+Competition "1" -- "0..*" Beer : includes >
+Competition "1" -- "0..*" Vote : receives votes >
+Beer "0..*" -- "*" Vote : voted for >
+
+@enduml

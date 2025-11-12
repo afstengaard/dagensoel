@@ -1,0 +1,77 @@
+@startuml
+enum VoteType {
+    FIRST_FAVORITE
+    SECOND_FAVORITE
+}
+
+enum Role {
+    ADMIN
+    USER
+}
+
+'-------------------------
+' User class (Admin)
+'-------------------------
+class User {
+    -Long id
+    -String name
+    -String email
+    -String passwordHash
+    -Role role
+    +User(name: String, email: String, passwordHash: String, role: Role)
+    +createCompetition(year: int, accessCode: String): Competition
+    +updateCompetition(competition: Competition): void
+    +deleteCompetition(competition: Competition): void
+    +login(email: String, password: String): Boolean
+}
+
+'-------------------------
+' Competition class
+'-------------------------
+class Competition {
+    -Long id
+    -int year
+    -Boolean active
+    -String accessCode
+    +Competition(year: int, accessCode: String)
+    +addBeer(beer: Beer): void
+    +removeBeer(beer: Beer): void
+    +startVoting(): void
+    +endVoting(): void
+    +getBeers(): List<Beer>
+}
+
+'-------------------------
+' Beer class
+'-------------------------
+class Beer {
+    -Long id
+    -String name
+    -int firstReleasedYear
+    -String countryOfOrigin
+    -String description
+    +Beer(name: String, firstReleasedYear: int, countryOfOrigin: String, description: String)
+    +getTotalPoints(): int
+}
+
+'-------------------------
+' Vote class
+'-------------------------
+class Vote {
+    -Long id
+    -VoteType voteType
+    -String sessionId
+    +Vote(voteType: VoteType, sessionId: String)
+    +castVote(beer: Beer, competition: Competition): void
+    +validateVote(competition: Competition): Boolean
+}
+
+'-------------------------
+' Relationships
+'-------------------------
+User "1" -- "*" Competition : manages >
+Competition "1" -- "0..*" Beer
+Competition "1" -- "0..*" Vote
+Beer "0..*" -- "*" Vote
+
+@enduml

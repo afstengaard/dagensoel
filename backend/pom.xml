@@ -71,7 +71,6 @@
 
     <build>
         <plugins>
-            <!-- Creates a fat JAR with Main-Class -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -94,5 +93,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

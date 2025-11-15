@@ -1,7 +1,6 @@
 ### Project Essentials
 /target/
 /backend/target/
-/backend/META-INF/
 /backend/dependency-reduced-pom.xml
 .idea/
 *.iml

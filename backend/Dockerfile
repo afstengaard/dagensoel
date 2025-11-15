@@ -3,22 +3,15 @@ FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-# Copy Maven wrapper
-COPY mvnw mvnw
-COPY .mvn .mvn
-RUN chmod +x mvnw
-
-# Copy pom
+# Copy Maven config and source
 COPY pom.xml .
+COPY src ./src
 
 # Download dependencies
-RUN ./mvnw -B dependency:go-offline
-
-# Copy source
-COPY src src
+RUN mvn -B dependency:go-offline
 
 # Build JAR
-RUN ./mvnw -B clean package -DskipTests
+RUN mvn -B clean package -DskipTests
 
 # ---- Run Stage ----
 FROM eclipse-temurin:17-jdk

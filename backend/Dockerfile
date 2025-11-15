@@ -18,7 +18,7 @@ FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
-COPY --from=build /app/target/*-shaded.jar app.jar
+COPY --from=build /app/target/backend-1.0-SNAPSHOT.jar app.jar
 
 EXPOSE 7070
 

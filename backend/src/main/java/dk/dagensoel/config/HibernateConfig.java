@@ -8,11 +8,6 @@ import org.hibernate.service.ServiceRegistry;
 import javax.persistence.EntityManagerFactory;
 import java.util.Properties;
 
-/**
- * Purpose:
- *
- * @Author: Anton Friis Stengaard
- */
 public class HibernateConfig {
 
     private static EntityManagerFactory emf;
@@ -27,44 +22,46 @@ public class HibernateConfig {
     private static EntityManagerFactory createEntityManagerFactory() {
         try {
             Configuration configuration = new Configuration();
-
-            // Hibernate settings
             Properties props = new Properties();
+
             props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
             props.put("hibernate.connection.driver_class", "org.postgresql.Driver");
-
-            // Get database credentials from environment variables (Render.com)
-            String host = System.getenv("POSTGRES_HOST");
-            String user = System.getenv("POSTGRES_USER");
-            String pass = System.getenv("POSTGRES_PASSWORD");
-            String db   = System.getenv("POSTGRES_DATABASE");
-
-            // Fallback for local development
-            if (host == null || host.isEmpty()) {
-                host = "localhost";
-                user = "postgres";
-                pass = "postgres";
-                db = "dagensoel";
-            }
-
-            String url = "jdbc:postgresql://" + host + ":5432/" + db;
-            props.put("hibernate.connection.url", url);
-            props.put("hibernate.connection.username", user);
-            props.put("hibernate.connection.password", pass);
-
             props.put("hibernate.hbm2ddl.auto", "update");
             props.put("hibernate.show_sql", "true");
             props.put("hibernate.format_sql", "true");
 
+            // ----------- Render.com DATABASE_URL handling --------------
+            String dbUrl = System.getenv("DATABASE_URL");
+
+            if (dbUrl != null && dbUrl.startsWith("postgres://")) {
+                dbUrl = dbUrl.replace("postgres://", "");
+
+                String user = dbUrl.substring(0, dbUrl.indexOf(':'));
+                String pass = dbUrl.substring(dbUrl.indexOf(':') + 1, dbUrl.indexOf('@'));
+                String hostPortDb = dbUrl.substring(dbUrl.indexOf('@') + 1);
+                String host = hostPortDb.substring(0, hostPortDb.indexOf(':'));
+                String port = hostPortDb.substring(hostPortDb.indexOf(':') + 1, hostPortDb.indexOf('/'));
+                String db = hostPortDb.substring(hostPortDb.indexOf('/') + 1);
+
+                props.put("hibernate.connection.url", "jdbc:postgresql://" + host + ":" + port + "/" + db);
+                props.put("hibernate.connection.username", user);
+                props.put("hibernate.connection.password", pass);
+
+                System.out.println("Using Render DATABASE_URL");
+            } else {
+                props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/dagensoel");
+                props.put("hibernate.connection.username", "postgres");
+                props.put("hibernate.connection.password", "postgres");
+
+                System.out.println("Using local DB config");
+            }
+
             configuration.setProperties(props);
 
-            // TODO: Add entity classes
-            // configuration.addAnnotatedClass(Beer.class);
+            ServiceRegistry registry =
+                    new StandardServiceRegistryBuilder().applySettings(props).build();
 
-            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                    .applySettings(configuration.getProperties()).build();
-
-            SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            SessionFactory sessionFactory = configuration.buildSessionFactory(registry);
             return sessionFactory.unwrap(EntityManagerFactory.class);
 
         } catch (Exception ex) {
@@ -72,5 +69,4 @@ public class HibernateConfig {
             throw new ExceptionInInitializerError(ex);
         }
     }
-
 }

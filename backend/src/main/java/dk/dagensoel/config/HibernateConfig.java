@@ -30,24 +30,20 @@ public class HibernateConfig {
             props.put("hibernate.show_sql", "true");
             props.put("hibernate.format_sql", "true");
 
-            // ----------- Render.com DATABASE_URL handling --------------
-            String dbUrl = System.getenv("DATABASE_URL");
+            // ----------- Render.com POSTGRES_ variables --------------
+            String host = System.getenv("POSTGRES_HOST");
+            String db   = System.getenv("POSTGRES_DATABASE");
+            String user = System.getenv("POSTGRES_USER");
+            String pass = System.getenv("POSTGRES_PASSWORD");
 
-            if (dbUrl != null && dbUrl.startsWith("postgres://")) {
-                dbUrl = dbUrl.replace("postgres://", "");
+            if (host != null && db != null && user != null && pass != null) {
+                String jdbcUrl = "jdbc:postgresql://" + host + ":5432/" + db;
 
-                String user = dbUrl.substring(0, dbUrl.indexOf(':'));
-                String pass = dbUrl.substring(dbUrl.indexOf(':') + 1, dbUrl.indexOf('@'));
-                String hostPortDb = dbUrl.substring(dbUrl.indexOf('@') + 1);
-                String host = hostPortDb.substring(0, hostPortDb.indexOf(':'));
-                String port = hostPortDb.substring(hostPortDb.indexOf(':') + 1, hostPortDb.indexOf('/'));
-                String db = hostPortDb.substring(hostPortDb.indexOf('/') + 1);
-
-                props.put("hibernate.connection.url", "jdbc:postgresql://" + host + ":" + port + "/" + db);
+                props.put("hibernate.connection.url", jdbcUrl);
                 props.put("hibernate.connection.username", user);
                 props.put("hibernate.connection.password", pass);
 
-                System.out.println("Using Render DATABASE_URL");
+                System.out.println("Using Render POSTGRES_* env vars");
             } else {
                 props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/dagensoel");
                 props.put("hibernate.connection.username", "postgres");

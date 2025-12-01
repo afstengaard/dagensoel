@@ -21,7 +21,6 @@ public class VoteDTO {
 
     public VoteDTO(Vote vote) {
         this.id = vote.getId();
-        this.userId = vote.getUser().getId();
         this.beerId = vote.getBeer().getId();
         this.points = vote.getPoints();
     }

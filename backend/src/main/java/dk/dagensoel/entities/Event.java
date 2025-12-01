@@ -2,6 +2,8 @@ package dk.dagensoel.entities;
 
 import lombok.*;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -20,8 +22,10 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    private int year;     // e.g. 2024, 2025…
+    private int year;
+    private String name;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @OneToMany(mappedBy = "event")
     private List<Beer> beers;

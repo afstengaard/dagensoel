@@ -19,10 +19,7 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int points; // 2 or 1
-
-    @ManyToOne
-    private User voter;
+    private int points;
 
     @ManyToOne
     private Beer beer;

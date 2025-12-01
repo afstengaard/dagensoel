@@ -16,13 +16,13 @@ import lombok.*;
 public class EventDTO {
     private int id;
     private String name;
-    private String date;
-    private boolean votingOpen;
+    private String startDate;
+    private String endDate;
 
     public EventDTO(Event event) {
         this.id = event.getId();
         this.name = event.getName();
-        this.date = event.getDate().toString();
-        this.votingOpen = event.isVotingOpen();
+        this.startDate = event.getStartDate().toString();
+        this.endDate = event.getEndDate().toString();
     }
 }

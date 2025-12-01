@@ -20,7 +20,6 @@ public class UserDTO {
 
     public UserDTO(User user) {
         this.id = user.getId();
-        this.username = user.getUsername();
-        this.displayName = user.getDisplayName();
+        this.username = user.getName();
     }
 }

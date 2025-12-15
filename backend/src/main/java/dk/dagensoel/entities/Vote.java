@@ -17,10 +17,15 @@ public class Vote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    private int points;
+    @ManyToOne(optional = false)
+    private Beer favoriteBeer;
 
-    @ManyToOne
-    private Beer beer;
+    @ManyToOne(optional = false)
+    private Beer secondFavoriteBeer;
+
+    @ManyToOne(optional = false)
+    private Event event;
+
 }

@@ -19,5 +19,7 @@ public class EventRoutes {
         app.post("/api/events", controller::create);
         app.put("/api/events/{id}", controller::update);
         app.delete("/api/events/{id}", controller::delete);
+        app.get("/api/events/{code}", controller::getByCode);
+
     }
 }

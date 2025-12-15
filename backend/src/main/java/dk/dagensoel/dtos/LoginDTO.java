@@ -11,8 +11,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class VoteDTO {
-    private long favoriteBeerId;
-    private long secondFavoriteBeerId;
+public class LoginDTO {
+    private String username;
+    private String password;
 }

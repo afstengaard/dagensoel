@@ -3,7 +3,6 @@ package dk.dagensoel.controllers;
 import dk.dagensoel.daos.UserDAO;
 import dk.dagensoel.entities.User;
 import io.javalin.http.Context;
-import io.javalin.Javalin;
 
 /**
  * Purpose:

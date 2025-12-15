@@ -15,7 +15,8 @@ public class VoteRoutes {
     public void register(Javalin app) {
         app.get("/api/votes", controller::getAll);
         app.get("/api/votes/{id}", controller::getById);
-        app.post("/api/votes", controller::create);
         app.delete("/api/votes/{id}", controller::delete);
+        app.post("/api/events/{code}/votes", controller::create);
+
     }
 }

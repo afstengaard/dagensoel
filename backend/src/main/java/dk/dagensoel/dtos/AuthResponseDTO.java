@@ -1,18 +1,15 @@
 package dk.dagensoel.dtos;
 
 import lombok.*;
-
 /**
  * Purpose:
  *
  * @Author: Anton Friis Stengaard
  */
+
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class VoteDTO {
-    private long favoriteBeerId;
-    private long secondFavoriteBeerId;
+public class AuthResponseDTO {
+    private String token;
 }
+

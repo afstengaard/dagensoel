@@ -17,13 +17,13 @@ public class Beer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     private String name;
     private String brewery;
-
-    @ManyToOne
-    private User submittedBy;
+    private String country;
+    private double abv;
+    private String submittedBy;
 
     @ManyToOne
     private Event event;

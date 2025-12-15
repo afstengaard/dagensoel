@@ -1,5 +1,6 @@
 package dk.dagensoel;
 
+import dk.dagensoel.config.ApplicationConfig;
 import dk.dagensoel.config.HibernateConfig;
 import dk.dagensoel.routes.Routes;
 import io.javalin.Javalin;
@@ -14,9 +15,7 @@ public class Main {
 
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "7070"));
 
-        Javalin app = Javalin.create(config -> {
-            config.http.defaultContentType = "application/json";
-        }).start(port);
+        Javalin app = ApplicationConfig.initApp();
 
         // Register all API routes
         Routes.register(app);

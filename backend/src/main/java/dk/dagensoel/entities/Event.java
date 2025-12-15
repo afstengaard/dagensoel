@@ -21,8 +21,10 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private int year;
+    private long code;
+    private boolean votingOpen;
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;

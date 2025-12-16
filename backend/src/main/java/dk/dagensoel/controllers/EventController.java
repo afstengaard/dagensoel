@@ -1,54 +1,31 @@
 package dk.dagensoel.controllers;
 
 import dk.dagensoel.daos.EventDAO;
+import dk.dagensoel.daos.VoteDAO;
 import dk.dagensoel.dtos.EventDTO;
+import dk.dagensoel.dtos.ResultDTO;
 import dk.dagensoel.entities.Event;
+import dk.dagensoel.entities.EventStatus;
 import io.javalin.http.Context;
+
+import java.util.List;
 
 /**
  * Purpose:
  *
  * @Author: Anton Friis Stengaard
  */
+
 public class EventController {
 
     private final EventDAO dao = new EventDAO();
+    private final VoteDAO voteDAO = new VoteDAO();
 
-    //READ
-
-    public void getAll(Context ctx) {
-        ctx.json(
-                dao.findAll()
-                        .stream()
-                        .map(EventDTO::new)
-                        .toList()
-        );
-    }
-
-    public void getById(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("id"));
-        Event event = dao.findById(id);
-
-        if (event == null) {
-            ctx.status(404).result("Event not found");
-            return;
-        }
-
-        ctx.json(new EventDTO(event));
-    }
-
+    // READ
     public void getByCode(Context ctx) {
-
-        long code;
-        try {
-            code = Long.parseLong(ctx.pathParam("code"));
-        } catch (NumberFormatException e) {
-            ctx.status(400).result("Invalid event code");
-            return;
-        }
+        String code = ctx.pathParam("code");
 
         Event event = dao.findByCode(code);
-
         if (event == null) {
             ctx.status(404).result("Event not found");
             return;
@@ -57,26 +34,91 @@ public class EventController {
         ctx.json(new EventDTO(event));
     }
 
-    //WRITE
+    public void getHistory(Context ctx) {
+        List<EventDTO> history = dao.findClosedEvents()
+                .stream()
+                .map(EventDTO::new)
+                .toList();
+
+        ctx.json(history);
+    }
+
+    public void getActive(Context ctx) {
+        Event event = dao.findActiveEvent();
+        if (event == null) {
+            ctx.status(404).result("No active event");
+            return;
+        }
+
+        ctx.json(new EventDTO(event));
+    }
+
+    // WRITE
 
     public void create(Context ctx) {
-        Event event = ctx.bodyAsClass(Event.class);
+        EventDTO dto = ctx.bodyAsClass(EventDTO.class);
+
+        Event event = new Event();
+        event.setName(dto.name);
+        event.setStatus(EventStatus.OPEN);
+        event.setCode(dao.generateUniqueCode());
+        event.setNextEventAt(dto.nextEventAt);
+
         Event created = dao.create(event);
         ctx.status(201).json(new EventDTO(created));
     }
 
-    public void update(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("id"));
-        Event event = ctx.bodyAsClass(Event.class);
-        event.setId(id);
+    public void updateStatus(Context ctx) {
+        Long id = Long.parseLong(ctx.pathParam("id"));
+        EventDTO dto = ctx.bodyAsClass(EventDTO.class);
 
-        Event updated = dao.update(event);
-        ctx.json(new EventDTO(updated));
+        Event event = dao.findById(id);
+        if (event == null) {
+            ctx.status(404).result("Event not found");
+            return;
+        }
+
+        if (!isValidTransition(event.getStatus(), dto.status)) {
+            ctx.status(400).result("Invalid event status transition");
+            return;
+        }
+
+        event.setStatus(dto.status);
+        dao.update(event);
+
+        ctx.json(new EventDTO(event));
     }
 
-    public void delete(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("id"));
-        dao.delete(id);
-        ctx.status(204);
+    // HELPERS
+
+    private boolean isValidTransition(EventStatus current, EventStatus next) {
+        return (current == EventStatus.OPEN && next == EventStatus.VOTING)
+                || (current == EventStatus.VOTING && next == EventStatus.CLOSED);
+    }
+
+    public void getResults(Context ctx) {
+        Long eventId = Long.parseLong(ctx.pathParam("id"));
+
+        Event event = dao.findById(eventId);
+        if (event == null) {
+            ctx.status(404).result("Event not found");
+            return;
+        }
+
+        if (event.getStatus() != EventStatus.CLOSED) {
+            ctx.status(403).result("Results are not available yet");
+            return;
+        }
+
+        List<ResultDTO> results = voteDAO.getResultsForEvent(eventId)
+                .stream()
+                .map(row -> new ResultDTO(
+                        (Long) row[0],
+                        (String) row[1],
+                        ((Number) row[2]).intValue()
+                ))
+                .toList();
+
+        ctx.json(results);
     }
 }

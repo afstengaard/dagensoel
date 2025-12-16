@@ -20,7 +20,7 @@ public abstract class BaseDAO<T> {
         this.entityClass = entityClass;
     }
 
-    public T findById(int id) {
+    public T findById(long id) {
         try (EntityManager em = emf.createEntityManager()) {
             return em.find(entityClass, id);
         }

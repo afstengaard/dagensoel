@@ -14,21 +14,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class BeerDTO {
-    private long id;
-    private String name;
-    private String brewery;
-    private String country;
-    private double abv;
-    private long eventId;
-    private String submittedBy;
 
-    public BeerDTO(Beer beer) {
-        this.id = beer.getId();
-        this.name = beer.getName();
-        this.brewery = beer.getBrewery();
-        this.country = beer.getCountry();
-        this.abv = beer.getAbv();
-        this.eventId = beer.getEvent().getId();
-        this.submittedBy = beer.getSubmittedBy();
-    }
+    public Long id;
+    public String name;
+    public String brewery;
+    public String country;
+    public double abv;
+    public String submittedBy;
 }
+

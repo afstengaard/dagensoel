@@ -1,12 +1,10 @@
 package dk.dagensoel.controllers;
 
+import dk.dagensoel.daos.BeerDAO;
 import dk.dagensoel.daos.EventDAO;
 import dk.dagensoel.daos.VoteDAO;
 import dk.dagensoel.dtos.VoteDTO;
-import dk.dagensoel.dtos.VoteReadDTO;
-import dk.dagensoel.entities.Beer;
-import dk.dagensoel.entities.Event;
-import dk.dagensoel.entities.Vote;
+import dk.dagensoel.entities.*;
 import io.javalin.http.Context;
 
 /**
@@ -16,21 +14,13 @@ import io.javalin.http.Context;
  */
 public class VoteController {
 
-    private final VoteDAO dao = new VoteDAO();
+    private final VoteDAO voteDAO = new VoteDAO();
     private final EventDAO eventDAO = new EventDAO();
-
-    /* -------------------- PUBLIC VOTING -------------------- */
+    private final BeerDAO beerDAO = new BeerDAO();
 
     public void create(Context ctx) {
 
-        long code;
-        try {
-            code = Long.parseLong(ctx.pathParam("code"));
-        } catch (NumberFormatException e) {
-            ctx.status(400).result("Invalid event code");
-            return;
-        }
-
+        String code = ctx.pathParam("code");
         VoteDTO dto = ctx.bodyAsClass(VoteDTO.class);
 
         Event event = eventDAO.findByCode(code);
@@ -39,64 +29,43 @@ public class VoteController {
             return;
         }
 
-        if (!event.isVotingOpen()) {
+        if (event.getStatus() != EventStatus.VOTING) {
             ctx.status(403).result("Voting is not open");
             return;
         }
 
-        if (dto.getFavoriteBeerId() == dto.getSecondFavoriteBeerId()) {
-            ctx.status(400).result("You cannot vote for the same beer twice");
+        Beer beer = beerDAO.findById(dto.beerId);
+        if (beer == null || !beer.getEvent().equals(event)) {
+            ctx.status(400).result("Invalid beer for this event");
             return;
         }
 
-        Beer favorite = dao.findBeerById(dto.getFavoriteBeerId());
-        Beer second = dao.findBeerById(dto.getSecondFavoriteBeerId());
+        String deviceHash = resolveDeviceHash(ctx);
 
-        if (favorite == null || second == null) {
-            ctx.status(400).result("Invalid beer selection");
+        if (voteDAO.hasVoted(event, deviceHash, dto.type)) {
+            ctx.status(409).result("You have already cast this vote");
             return;
         }
 
-        if (favorite.getEvent() != event || second.getEvent() != event) {
-            ctx.status(400).result("Beers do not belong to this event");
-            return;
-        }
+        Vote vote = new Vote();
+        vote.setEvent(event);
+        vote.setBeer(beer);
+        vote.setDeviceHash(deviceHash);
+        vote.setType(dto.type);
+        vote.setPoints(dto.type == VoteType.FAVORITE ? 2 : 1);
 
-        dao.create(Vote.builder()
-                .event(event)
-                .favoriteBeer(favorite)
-                .secondFavoriteBeer(second)
-                .build());
+        voteDAO.create(vote);
 
-        ctx.status(201); // ← no body
+        ctx.status(201);
     }
 
-    /* -------------------- ADMIN -------------------- */
+    // DEVICE IDENTIFICATION
 
-    public void getAll(Context ctx) {
-        ctx.json(
-                dao.findAll()
-                        .stream()
-                        .map(VoteReadDTO::new)
-                        .toList()
-        );
-    }
-
-    public void getById(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("id"));
-        Vote vote = dao.findById(id);
-
-        if (vote == null) {
-            ctx.status(404).result("Vote not found");
-            return;
+    private String resolveDeviceHash(Context ctx) {
+        String header = ctx.header("X-Device-Id");
+        if (header == null || header.isBlank()) {
+            return ctx.req().getRemoteAddr(); // fallback
         }
-
-        ctx.json(new VoteReadDTO(vote));
-    }
-
-    public void delete(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("id"));
-        dao.delete(id);
-        ctx.status(204);
+        return header;
     }
 }

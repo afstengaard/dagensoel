@@ -1,5 +1,9 @@
 package dk.dagensoel.config;
 
+import dk.dagensoel.entities.AdminUser;
+import dk.dagensoel.entities.Beer;
+import dk.dagensoel.entities.Event;
+import dk.dagensoel.entities.Vote;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -53,6 +57,12 @@ public class HibernateConfig {
             }
 
             configuration.setProperties(props);
+
+            configuration.addAnnotatedClass(Event.class);
+            configuration.addAnnotatedClass(Beer.class);
+            configuration.addAnnotatedClass(Vote.class);
+            configuration.addAnnotatedClass(AdminUser.class);
+
 
             ServiceRegistry registry =
                     new StandardServiceRegistryBuilder().applySettings(props).build();

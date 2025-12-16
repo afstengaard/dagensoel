@@ -10,7 +10,7 @@ enum Role {
 }
 
 '-------------------------
-' User class (Admin)
+' AdminUser class (Admin)
 '-------------------------
 class User {
     -Long id

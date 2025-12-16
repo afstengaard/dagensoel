@@ -25,6 +25,6 @@ public class Beer {
     private double abv;
     private String submittedBy;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Event event;
 }

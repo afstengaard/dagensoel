@@ -1,6 +1,6 @@
 package dk.dagensoel.daos;
 
-import dk.dagensoel.entities.User;
+import dk.dagensoel.entities.AdminUser;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
@@ -9,17 +9,17 @@ import jakarta.persistence.NoResultException;
  *
  * @Author: Anton Friis Stengaard
  */
-public class UserDAO extends BaseDAO<User> {
+public class AdminUserDAO extends BaseDAO<AdminUser> {
 
-    public UserDAO() {
-        super(User.class);
+    public AdminUserDAO() {
+        super(AdminUser.class);
     }
 
-    public User findByUsername(String username) {
+    public AdminUser findByUsername(String username) {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createQuery(
-                            "SELECT u FROM User u WHERE u.username = :username",
-                            User.class
+                            "SELECT u FROM AdminUser u WHERE u.username = :username",
+                            AdminUser.class
                     )
                     .setParameter("username", username)
                     .getSingleResult();

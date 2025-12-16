@@ -13,10 +13,6 @@ public class VoteRoutes {
     private final VoteController controller = new VoteController();
 
     public void register(Javalin app) {
-        app.get("/api/votes", controller::getAll);
-        app.get("/api/votes/{id}", controller::getById);
-        app.delete("/api/votes/{id}", controller::delete);
         app.post("/api/events/{code}/votes", controller::create);
-
     }
 }

@@ -10,9 +10,10 @@ import io.javalin.Javalin;
 public class Routes {
 
     public static void register(Javalin app) {
-        new BeerRoutes().register(app);
+        new SecurityRoutes().register(app);
+        new AdminUserRoutes().register(app);
         new EventRoutes().register(app);
-        new UserRoutes().register(app);
+        new BeerRoutes().register(app);
         new VoteRoutes().register(app);
     }
 }

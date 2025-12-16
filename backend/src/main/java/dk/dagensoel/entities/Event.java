@@ -21,14 +21,19 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private int year;
-    private long code;
-    private boolean votingOpen;
-    private String name;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private Long id;
 
-    @OneToMany(mappedBy = "event")
+    private String name;
+
+    @Column(unique = true, nullable = false)
+    private String code;   // e.g. "AB7F"
+
+    @Enumerated(EnumType.STRING)
+    private EventStatus status; // OPEN, VOTING, CLOSED
+
+    private LocalDate nextEventAt; // for countdown ONLY
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<Beer> beers;
 }
+

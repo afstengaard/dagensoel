@@ -1,6 +1,6 @@
 package dk.dagensoel.dtos;
 
-import dk.dagensoel.entities.VoteType;
+import dk.dagensoel.entities.AdminUser;
 import lombok.*;
 
 /**
@@ -13,9 +13,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VoteDTO {
-
-    public Long eventId;
-    public Long beerId;
-    public VoteType type; // FAVORITE / SECOND
+public class AdminUserDTO {
+    public Long id;
+    public String username;
 }
+

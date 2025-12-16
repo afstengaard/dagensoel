@@ -21,5 +21,14 @@ public class BeerDTO {
     public String country;
     public double abv;
     public String submittedBy;
+
+    public BeerDTO(Beer beer) {
+        this.id = beer.getId();
+        this.name = beer.getName();
+        this.brewery = beer.getBrewery();
+        this.country = beer.getCountry();
+        this.abv = beer.getAbv();
+        this.submittedBy = beer.getSubmittedBy();
+    }
 }
 

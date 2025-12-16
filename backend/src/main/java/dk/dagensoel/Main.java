@@ -30,5 +30,7 @@ public class Main {
                 ctx.status(500).result("DB error: " + e.getMessage());
             }
         });
+
+        app.start(port);
     }
 }

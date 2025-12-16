@@ -1,0 +1,30 @@
+# === Maven / Java build output ===
+target/
+dependency-reduced-pom.xml
+*.class
+*.log
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# === IntelliJ IDEA ===
+.idea/
+*.iml
+*.iws
+out/
+.idea_modules/
+.idea/**
+
+# === Environment variables ===
+.env
+.env.*
+
+# === OS files ===
+.DS_Store
+Thumbs.db

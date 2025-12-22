@@ -23,7 +23,7 @@ public class EventDTO {
     public String name;
     public String code;
     public EventStatus status;
-    public LocalDate nextEventAt;
+    public LocalDate startDate;
     public List<BeerDTO> beers;
 
     public EventDTO(Event event) {
@@ -31,7 +31,7 @@ public class EventDTO {
         this.name = event.getName();
         this.code = event.getCode();
         this.status = event.getStatus();
-        this.nextEventAt = event.getNextEventAt();
+        this.startDate = event.getStartDate();
         this.beers = event.getBeers() == null
                 ? List.of()
                 : event.getBeers()
@@ -39,5 +39,23 @@ public class EventDTO {
                 .map(BeerDTO::new)
                 .toList();
     }
+
+    public EventDTO(Event event, boolean includeBeers) {
+        this.id = event.getId();
+        this.name = event.getName();
+        this.code = event.getCode();
+        this.status = event.getStatus();
+        this.startDate = event.getStartDate();
+
+        if (includeBeers && event.getBeers() != null) {
+            this.beers = event.getBeers()
+                    .stream()
+                    .map(BeerDTO::new)
+                    .toList();
+        } else {
+            this.beers = List.of();
+        }
+    }
+
 }
 

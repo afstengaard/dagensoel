@@ -1,6 +1,8 @@
 package dk.dagensoel.config;
 
 import io.javalin.Javalin;
+import dk.dagensoel.security.JwtUtil;
+
 
 /**
  * Purpose:
@@ -25,6 +27,26 @@ public class ApplicationConfig {
             ctx.header("Access-Control-Allow-Credentials", "true");
 
         });
+
+        // JWT auth for admin routes
+        app.before("/api/admin/*", ctx -> {
+            String authHeader = ctx.header("Authorization");
+
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                ctx.status(401).result("Missing or invalid Authorization header");
+                return;
+            }
+
+            String token = authHeader.substring("Bearer ".length());
+
+            try {
+                String username = JwtUtil.validateToken(token);
+                ctx.attribute("username", username);
+            } catch (Exception e) {
+                ctx.status(401).result("Invalid or expired token");
+            }
+        });
+
 
         app.options("/*", ctx -> ctx.status(200));
 

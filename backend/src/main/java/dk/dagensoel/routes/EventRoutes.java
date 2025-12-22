@@ -15,13 +15,14 @@ public class EventRoutes {
 
     public void register(Javalin app) {
 
-        // Public
-        app.get("/api/events/code/{code}", controller::getByCode);
+        // Public (read-only)
         app.get("/api/events/active", controller::getActive);
         app.get("/api/events/history", controller::getHistory);
-        // Admin
-        app.post("/api/events", controller::create);
-        app.post("/api/events/{id}/status", controller::updateStatus);
-        app.get("/api/events/{id}/results", controller::getResults); // next step
+        app.get("/api/events/{code}", controller::getByCode);
+
+        // Admin (JWT-protected)
+        app.post("/api/admin/events/{id}/status", controller::updateStatus);
+        app.get("/api/admin/events/{id}/results", controller::getResults);
+        app.post("/api/admin/events", controller::create);
     }
 }

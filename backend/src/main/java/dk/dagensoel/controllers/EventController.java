@@ -50,19 +50,23 @@ public class EventController {
             return;
         }
 
-        ctx.json(new EventDTO(event));
+        ctx.json(new EventDTO(event, false)); // Exclude beers as they're unnecessary here.
     }
 
     // WRITE
 
     public void create(Context ctx) {
+        if (dao.hasActiveEvent()) {
+            ctx.status(400).result("An active event already exists");
+            return;
+        }
         EventDTO dto = ctx.bodyAsClass(EventDTO.class);
 
         Event event = new Event();
         event.setName(dto.name);
         event.setStatus(EventStatus.OPEN);
         event.setCode(dao.generateUniqueCode());
-        event.setNextEventAt(dto.nextEventAt);
+        event.setStartDate(dto.startDate);
 
         Event created = dao.create(event);
         ctx.status(201).json(new EventDTO(created));
@@ -83,10 +87,18 @@ public class EventController {
             return;
         }
 
+        if (dto.status == EventStatus.VOTING) {
+            Event active = dao.findActiveEvent();
+            if (active != null && !active.getId().equals(event.getId())) {
+                ctx.status(400).result("Another active event already exists");
+                return;
+            }
+        }
+
         event.setStatus(dto.status);
         dao.update(event);
 
-        ctx.json(new EventDTO(event));
+        ctx.json(new EventDTO(event,false));
     }
 
     // HELPERS

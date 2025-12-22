@@ -31,7 +31,7 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventStatus status; // OPEN, VOTING, CLOSED
 
-    private LocalDate nextEventAt; // for countdown ONLY
+    private LocalDate startDate; // for countdown ONLY
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<Beer> beers;

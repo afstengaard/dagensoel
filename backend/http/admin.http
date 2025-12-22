@@ -1,0 +1,21 @@
+###Create admin user
+POST http://localhost:7070/api/admin/users
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "passwordHash": "$2a$10$2GYIylshP.NP8lGTdV.YReNVsOXdnW56h4XAoK0tqWLF2unWApsfW"
+}
+
+###Login as admin user (Get jwt)
+POST http://localhost:7070/api/auth/login
+Content-Type: application/json
+
+{
+"username": "admin",
+"password": "admin123"
+}
+
+###Get admin user info
+GET http://localhost:7070/api/admin/me
+Authorization: Bearer {{jwt}}

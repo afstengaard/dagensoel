@@ -1,6 +1,5 @@
 package dk.dagensoel.daos;
 
-
 import dk.dagensoel.entities.Event;
 import dk.dagensoel.entities.EventStatus;
 import jakarta.persistence.EntityManager;
@@ -41,15 +40,37 @@ public class EventDAO extends BaseDAO<Event> {
 
     public Event findActiveEvent() {
         try (EntityManager em = emf.createEntityManager()) {
-            return em.createQuery(
-                            "SELECT e FROM Event e WHERE e.status IN (:open, :voting)",
+            List<Event> events = em.createQuery(
+                            "SELECT e FROM Event e WHERE e.status IN (:open, :voting) ORDER BY e.id DESC",
                             Event.class
                     )
                     .setParameter("open", EventStatus.OPEN)
                     .setParameter("voting", EventStatus.VOTING)
+                    .getResultList();
+
+            if (events.isEmpty()) {
+                return null;
+            }
+
+            if (events.size() > 1) {
+                throw new IllegalStateException("More than one active event exists");
+            }
+
+            return events.get(0);
+        }
+    }
+
+    public boolean hasActiveEvent() {
+        try (EntityManager em = emf.createEntityManager()) {
+            Long count = em.createQuery(
+                            "SELECT COUNT(e) FROM Event e WHERE e.status IN (:open, :voting)",
+                            Long.class
+                    )
+                    .setParameter("open", EventStatus.OPEN)
+                    .setParameter("voting", EventStatus.VOTING)
                     .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
+
+            return count > 0;
         }
     }
 

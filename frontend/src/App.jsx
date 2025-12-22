@@ -7,6 +7,8 @@ import Results from "./pages/Results";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import CreateEvent from "./pages/CreateEvent";
+
 
 export default function App() {
   return (
@@ -20,6 +22,7 @@ export default function App() {
         <Route path="/event/:code/vote" element={<Vote />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/events/create" element={<CreateEvent />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

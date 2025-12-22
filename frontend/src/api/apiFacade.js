@@ -81,6 +81,16 @@ const login = async (username, password) => {
 const getEventByCode = (code) =>
   fetchJson(`/api/events/${code}`, makeOptions("GET", false));
 
+const createEvent = (event) =>
+  fetchWithAuth("/api/admin/events", "POST", event);
+
+const getActiveEvent = () =>
+  fetchJson("/api/events/active", makeOptions("GET", false));
+
+const updateEventStatus = (id, status) =>
+  fetchWithAuth(`/api/admin/events/${id}/status`, "POST", { status });
+
+
 //EXPORT
 
 const apiFacade = {
@@ -88,6 +98,9 @@ const apiFacade = {
   logout,
   loggedIn,
   getEventByCode,
+  getActiveEvent,
+  createEvent,
+  updateEventStatus,
 };
 
 export default apiFacade;

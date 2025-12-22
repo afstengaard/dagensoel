@@ -8,18 +8,20 @@ export default function Event() {
   const [event, setEvent] = useState(null);
 
   useEffect(() => {
-  api.getEventByCode(code).then(setEvent);
-}, [code]);
-
+    api.getEventByCode(code).then(setEvent);
+  }, [code]);
 
   if (!event) return <p>Loading...</p>;
 
+  const votingOpen = event.status === "VOTING";
+
   return (
     <main>
-      <h1>{event.name} ({event.year})</h1>
-      <p>
-        {event.startDate} → {event.endDate}
-      </p>
+      <h1>{event.name}</h1>
+
+      {event.startDate && (
+        <p>Start date: {event.startDate}</p>
+      )}
 
       <h2>Beers tasted</h2>
 
@@ -53,13 +55,13 @@ export default function Event() {
       <br />
 
       <button
-        disabled={!event.votingOpen}
+        disabled={!votingOpen}
         onClick={() => navigate(`/event/${code}/vote`)}
       >
         Go to vote
       </button>
 
-      {!event.votingOpen && (
+      {!votingOpen && (
         <p>Voting is not open yet.</p>
       )}
     </main>

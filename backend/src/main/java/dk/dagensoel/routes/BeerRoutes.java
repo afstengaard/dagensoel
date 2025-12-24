@@ -13,7 +13,11 @@ public class BeerRoutes {
     private final BeerController controller = new BeerController();
 
     public void register(Javalin app) {
+
+        // Public
         app.get("/api/events/{eventId}/beers", controller::getByEvent);
-        app.post("/api/events/{eventId}/beers", controller::create);
+
+        // Admin
+        app.post("/api/admin/events/{eventId}/beers", controller::create);
     }
 }

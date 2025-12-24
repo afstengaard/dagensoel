@@ -18,9 +18,7 @@ public class BeerController {
     private final BeerDAO beerDAO = new BeerDAO();
     private final EventDAO eventDAO = new EventDAO();
 
-    // =======================
     // READ
-    // =======================
 
     // Public: get beers for an event
     public void getByEvent(Context ctx) {
@@ -34,9 +32,7 @@ public class BeerController {
         ctx.json(beers);
     }
 
-    // =======================
     // WRITE (ADMIN)
-    // =======================
 
     public void create(Context ctx) {
         Long eventId = Long.parseLong(ctx.pathParam("eventId"));

@@ -1,5 +1,5 @@
-import { useParams, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/apiFacade";
 
 export default function Event() {

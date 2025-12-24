@@ -1,5 +1,4 @@
-const API_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:7070";
+const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:7070";
 
 //TOKEN
 
@@ -39,6 +38,8 @@ const makeOptions = (method, addToken, body) => {
     opts.body = JSON.stringify(body);
   }
 
+  opts.headers["X-Device-Id"] = getDeviceId();
+
   return opts;
 };
 
@@ -76,6 +77,15 @@ const login = async (username, password) => {
   return data;
 };
 
+const getDeviceId = () => {
+  let id = localStorage.getItem("deviceId");
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("deviceId", id);
+  }
+  return id;
+};
+
 //EVENTS
 
 const getEventByCode = (code) =>
@@ -90,6 +100,15 @@ const getActiveEvent = () =>
 const updateEventStatus = (id, status) =>
   fetchWithAuth(`/api/admin/events/${id}/status`, "POST", { status });
 
+//VOTES
+
+const submitVotes = (code, votes) =>
+  fetchJson(`/api/events/${code}/votes`, makeOptions("POST", false, votes));
+
+//BEERS
+
+const addBeerToEvent = (eventId, beer) =>
+  fetchWithAuth(`/api/admin/events/${eventId}/beers`, "POST", beer);
 
 //EXPORT
 
@@ -97,10 +116,13 @@ const apiFacade = {
   login,
   logout,
   loggedIn,
+  getDeviceId,
   getEventByCode,
   getActiveEvent,
   createEvent,
   updateEventStatus,
+  submitVotes,
+  addBeerToEvent,
 };
 
 export default apiFacade;

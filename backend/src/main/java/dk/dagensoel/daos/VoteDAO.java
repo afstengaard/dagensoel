@@ -1,5 +1,6 @@
 package dk.dagensoel.daos;
 
+import dk.dagensoel.entities.Beer;
 import dk.dagensoel.entities.Event;
 import dk.dagensoel.entities.Vote;
 import dk.dagensoel.entities.VoteType;
@@ -52,4 +53,31 @@ public class VoteDAO extends BaseDAO<Vote> {
                     .getResultList();
         }
     }
+
+    public void createVotePair(
+            Event event,
+            Beer favorite,
+            Beer second,
+            String deviceHash
+    ) {
+        runInTransaction(em -> {
+            em.persist(Vote.builder()
+                    .event(event)
+                    .beer(favorite)
+                    .deviceHash(deviceHash)
+                    .type(VoteType.FAVORITE)
+                    .points(2)
+                    .build());
+
+            em.persist(Vote.builder()
+                    .event(event)
+                    .beer(second)
+                    .deviceHash(deviceHash)
+                    .type(VoteType.SECOND)
+                    .points(1)
+                    .build());
+        });
+    }
+
+
 }

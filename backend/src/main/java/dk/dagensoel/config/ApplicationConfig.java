@@ -23,7 +23,10 @@ public class ApplicationConfig {
         app.before(ctx -> {
             ctx.header("Access-Control-Allow-Origin", frontendOrigin);
             ctx.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-            ctx.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+            ctx.header(
+                    "Access-Control-Allow-Headers",
+                    "Content-Type,Authorization,X-Device-Id" //To keep track of devices.
+            );
             ctx.header("Access-Control-Allow-Credentials", "true");
 
         });

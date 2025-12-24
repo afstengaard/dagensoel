@@ -12,10 +12,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class VoteDTO {
-
-    public Long eventId;
-    public Long beerId;
-    public VoteType type; // FAVORITE / SECOND
+public class VoteRequestDTO {
+    public Long favoriteBeerId;
+    public Long secondBeerId;
 }

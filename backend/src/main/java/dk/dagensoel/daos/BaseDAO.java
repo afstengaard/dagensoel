@@ -4,7 +4,10 @@ import dk.dagensoel.config.HibernateConfig;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Purpose:
@@ -60,6 +63,24 @@ public abstract class BaseDAO<T> {
                 em.remove(entity);
             }
             em.getTransaction().commit();
+        }
+    }
+
+    protected void runInTransaction(Consumer<EntityManager> action) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+            action.accept(em);
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
         }
     }
 }

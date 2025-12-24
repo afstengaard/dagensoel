@@ -3,7 +3,8 @@ package dk.dagensoel.controllers;
 import dk.dagensoel.daos.BeerDAO;
 import dk.dagensoel.daos.EventDAO;
 import dk.dagensoel.daos.VoteDAO;
-import dk.dagensoel.dtos.VoteDTO;
+import dk.dagensoel.dtos.VoteRequestDTO;
+import dk.dagensoel.dtos.VoteResponseDTO;
 import dk.dagensoel.entities.*;
 import io.javalin.http.Context;
 
@@ -19,9 +20,18 @@ public class VoteController {
     private final BeerDAO beerDAO = new BeerDAO();
 
     public void create(Context ctx) {
-
         String code = ctx.pathParam("code");
-        VoteDTO dto = ctx.bodyAsClass(VoteDTO.class);
+        VoteRequestDTO dto = ctx.bodyAsClass(VoteRequestDTO.class);
+
+        if (dto.favoriteBeerId == null || dto.secondBeerId == null) {
+            ctx.status(400).result("Both votes must be selected");
+            return;
+        }
+
+        if (dto.favoriteBeerId.equals(dto.secondBeerId)) {
+            ctx.status(400).result("Favorite and second cannot be the same beer");
+            return;
+        }
 
         Event event = eventDAO.findByCode(code);
         if (event == null) {
@@ -34,28 +44,24 @@ public class VoteController {
             return;
         }
 
-        Beer beer = beerDAO.findById(dto.beerId);
-        if (beer == null || !beer.getEvent().equals(event)) {
-            ctx.status(400).result("Invalid beer for this event");
-            return;
-        }
-
         String deviceHash = resolveDeviceHash(ctx);
 
-        if (voteDAO.hasVoted(event, deviceHash, dto.type)) {
-            ctx.status(409).result("You have already cast this vote");
+        if (voteDAO.hasVoted(event, deviceHash, VoteType.FAVORITE)
+                || voteDAO.hasVoted(event, deviceHash, VoteType.SECOND)) {
+            ctx.status(409).result("You have already voted");
             return;
         }
 
-        Vote vote = new Vote();
-        vote.setEvent(event);
-        vote.setBeer(beer);
-        vote.setDeviceHash(deviceHash);
-        vote.setType(dto.type);
-        vote.setPoints(dto.type == VoteType.FAVORITE ? 2 : 1);
+        Beer favorite = beerDAO.findById(dto.favoriteBeerId);
+        Beer second = beerDAO.findById(dto.secondBeerId);
 
-        voteDAO.create(vote);
-
+        if (favorite == null || second == null
+                || !favorite.getEvent().equals(event)
+                || !second.getEvent().equals(event)) {
+            ctx.status(400).result("Invalid beer selection");
+            return;
+        }
+        voteDAO.createVotePair(event, favorite, second, deviceHash);
         ctx.status(201);
     }
 

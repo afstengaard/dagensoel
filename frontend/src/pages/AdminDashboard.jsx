@@ -7,6 +7,13 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const [beer, setBeer] = useState({
+    name: "",
+    brewery: "",
+    country: "",
+    abv: "",
+    submittedBy: "",
+  });
 
   useEffect(() => {
     async function load() {
@@ -30,6 +37,19 @@ export default function AdminDashboard() {
       setEvent(updated);
     } catch {
       alert("Failed to update event status");
+    }
+  }
+
+  async function addBeer() {
+    try {
+      await api.addBeerToEvent(event.id, {
+        ...beer,
+        abv: Number(beer.abv),
+      });
+      alert("Beer added");
+      setBeer({ name: "", brewery: "", country: "", abv: "", submittedBy: "" });
+    } catch {
+      alert("Failed to add beer");
     }
   }
 
@@ -68,9 +88,48 @@ export default function AdminDashboard() {
             Start date: {new Date(event.startDate).toLocaleDateString("da-DK")}
           </p>
 
-          {/* Later */}
-          {/* <button>Open voting</button> */}
-          {/* <button>Close event</button> */}
+          {event.status === "OPEN" && (
+            <>
+              <hr />
+              <h3>Add beer</h3>
+
+              <input
+                placeholder="Name"
+                value={beer.name}
+                onChange={(e) => setBeer({ ...beer, name: e.target.value })}
+              />
+
+              <input
+                placeholder="Brewery"
+                value={beer.brewery}
+                onChange={(e) => setBeer({ ...beer, brewery: e.target.value })}
+              />
+
+              <input
+                placeholder="Country"
+                value={beer.country}
+                onChange={(e) => setBeer({ ...beer, country: e.target.value })}
+              />
+
+              <input
+                type="number"
+                step="0.1"
+                placeholder="ABV"
+                value={beer.abv}
+                onChange={(e) => setBeer({ ...beer, abv: e.target.value })}
+              />
+
+              <input
+                placeholder="Submitted by"
+                value={beer.submittedBy}
+                onChange={(e) =>
+                  setBeer({ ...beer, submittedBy: e.target.value })
+                }
+              />
+
+              <button onClick={addBeer}>Add beer</button>
+            </>
+          )}
         </>
       )}
     </main>

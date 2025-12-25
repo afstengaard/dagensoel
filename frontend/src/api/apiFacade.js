@@ -61,6 +61,17 @@ const fetchJson = async (endpoint, options) => {
   return res.json();
 };
 
+const fetchNoContent = async (endpoint, options) => {
+  const res = await fetch(`${API_URL}${endpoint}`, options);
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || "Request failed");
+  }
+
+  return; // nothing to parse
+};
+
 const fetchWithAuth = (endpoint, method = "GET", body = null) =>
   fetchJson(endpoint, makeOptions(method, true, body));
 
@@ -103,7 +114,7 @@ const updateEventStatus = (id, status) =>
 //VOTES
 
 const submitVotes = (code, votes) =>
-  fetchJson(`/api/events/${code}/votes`, makeOptions("POST", false, votes));
+  fetchNoContent(`/api/events/${code}/votes`, makeOptions("POST", false, votes));
 
 //BEERS
 

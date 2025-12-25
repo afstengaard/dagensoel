@@ -56,8 +56,8 @@ public class VoteController {
         Beer second = beerDAO.findById(dto.secondBeerId);
 
         if (favorite == null || second == null
-                || !favorite.getEvent().equals(event)
-                || !second.getEvent().equals(event)) {
+                || !favorite.getEvent().getId().equals(event.getId())
+                || !second.getEvent().getId().equals(event.getId())) {
             ctx.status(400).result("Invalid beer selection");
             return;
         }

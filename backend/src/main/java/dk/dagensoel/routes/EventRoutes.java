@@ -19,10 +19,11 @@ public class EventRoutes {
         app.get("/api/events/active", controller::getActive);
         app.get("/api/events/history", controller::getHistory);
         app.get("/api/events/{code}", controller::getByCode);
+        app.get("/api/events/{id}/results", controller::getResults);
+
 
         // Admin (JWT-protected)
         app.post("/api/admin/events/{id}/status", controller::updateStatus);
-        app.get("/api/admin/events/{id}/results", controller::getResults);
         app.post("/api/admin/events", controller::create);
     }
 }

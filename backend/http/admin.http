@@ -19,3 +19,6 @@ Content-Type: application/json
 ###Get admin user info
 GET http://localhost:7070/api/admin/me
 Authorization: Bearer {{jwt}}
+
+###Get history
+GET http://localhost:7070/api/events/history

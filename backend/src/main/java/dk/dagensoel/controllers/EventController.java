@@ -1,14 +1,17 @@
 package dk.dagensoel.controllers;
 
+import dk.dagensoel.daos.BeerDAO;
 import dk.dagensoel.daos.EventDAO;
 import dk.dagensoel.daos.VoteDAO;
 import dk.dagensoel.dtos.EventDTO;
 import dk.dagensoel.dtos.ResultDTO;
+import dk.dagensoel.entities.Beer;
 import dk.dagensoel.entities.Event;
 import dk.dagensoel.entities.EventStatus;
 import io.javalin.http.Context;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Purpose:
@@ -18,14 +21,16 @@ import java.util.List;
 
 public class EventController {
 
-    private final EventDAO dao = new EventDAO();
+    private final EventDAO eventDAO = new EventDAO();
     private final VoteDAO voteDAO = new VoteDAO();
+    private final BeerDAO beerDAO = new BeerDAO();
+
 
     // READ
     public void getByCode(Context ctx) {
         String code = ctx.pathParam("code");
 
-        Event event = dao.findByCode(code);
+        Event event = eventDAO.findByCode(code);
         if (event == null) {
             ctx.status(404).result("Event not found");
             return;
@@ -34,17 +39,8 @@ public class EventController {
         ctx.json(new EventDTO(event));
     }
 
-    public void getHistory(Context ctx) {
-        List<EventDTO> history = dao.findClosedEvents()
-                .stream()
-                .map(EventDTO::new)
-                .toList();
-
-        ctx.json(history);
-    }
-
     public void getActive(Context ctx) {
-        Event event = dao.findActiveEvent();
+        Event event = eventDAO.findActiveEvent();
         if (event == null) {
             ctx.status(404).result("No active event");
             return;
@@ -56,7 +52,7 @@ public class EventController {
     // WRITE
 
     public void create(Context ctx) {
-        if (dao.hasActiveEvent()) {
+        if (eventDAO.hasActiveEvent()) {
             ctx.status(400).result("An active event already exists");
             return;
         }
@@ -65,10 +61,10 @@ public class EventController {
         Event event = new Event();
         event.setName(dto.name);
         event.setStatus(EventStatus.OPEN);
-        event.setCode(dao.generateUniqueCode());
+        event.setCode(eventDAO.generateUniqueCode());
         event.setStartDate(dto.startDate);
 
-        Event created = dao.create(event);
+        Event created = eventDAO.create(event);
         ctx.status(201).json(new EventDTO(created));
     }
 
@@ -76,7 +72,7 @@ public class EventController {
         Long id = Long.parseLong(ctx.pathParam("id"));
         EventDTO dto = ctx.bodyAsClass(EventDTO.class);
 
-        Event event = dao.findById(id);
+        Event event = eventDAO.findById(id);
         if (event == null) {
             ctx.status(404).result("Event not found");
             return;
@@ -88,7 +84,7 @@ public class EventController {
         }
 
         if (dto.status == EventStatus.VOTING) {
-            Event active = dao.findActiveEvent();
+            Event active = eventDAO.findActiveEvent();
             if (active != null && !active.getId().equals(event.getId())) {
                 ctx.status(400).result("Another active event already exists");
                 return;
@@ -96,9 +92,9 @@ public class EventController {
         }
 
         event.setStatus(dto.status);
-        dao.update(event);
+        eventDAO.update(event);
 
-        ctx.json(new EventDTO(event,false));
+        ctx.json(new EventDTO(event, false));
     }
 
     // HELPERS
@@ -111,7 +107,7 @@ public class EventController {
     public void getResults(Context ctx) {
         Long eventId = Long.parseLong(ctx.pathParam("id"));
 
-        Event event = dao.findById(eventId);
+        Event event = eventDAO.findById(eventId);
         if (event == null) {
             ctx.status(404).result("Event not found");
             return;
@@ -122,15 +118,69 @@ public class EventController {
             return;
         }
 
-        List<ResultDTO> results = voteDAO.getResultsForEvent(eventId)
-                .stream()
-                .map(row -> new ResultDTO(
-                        (Long) row[0],
-                        (String) row[1],
-                        ((Number) row[2]).intValue()
-                ))
-                .toList();
+        List<ResultDTO> results =
+                voteDAO.getResultsForEvent(eventId)
+                        .stream()
+                        .map(row -> {
+                            Long beerId = ((Number) row[0]).longValue();
+                            String beerName = (String) row[1];
+                            int totalPoints = ((Number) row[2]).intValue();
+
+                            Beer beer = beerDAO.findById(beerId);
+
+                            return new ResultDTO(
+                                    event.getId(),
+                                    event.getStartDate(),
+                                    beerId,
+                                    beerName,
+                                    beer.getSubmittedBy(),
+                                    totalPoints
+                            );
+                        })
+                        .toList();
 
         ctx.json(results);
     }
+
+
+    public void getHistory(Context ctx) {
+
+        List<Event> closedEvents = eventDAO.findClosedEvents();
+
+        List<ResultDTO> history = closedEvents.stream()
+                .map(event -> {
+
+                    List<Object[]> results =
+                            voteDAO.getResultsForEvent(event.getId());
+
+                    if (results.isEmpty()) {
+                        return null;
+                    }
+
+                    Object[] winner = results.get(0);
+
+                    Long beerId = ((Number) winner[0]).longValue();
+                    String beerName = (String) winner[1];
+                    int totalPoints = ((Number) winner[2]).intValue();
+
+                    Beer beer = beerDAO.findById(beerId);
+                    if (beer == null) {
+                        return null;
+                    }
+
+                    return new ResultDTO(
+                            event.getId(),
+                            event.getStartDate(),
+                            beerId,
+                            beerName,
+                            beer.getSubmittedBy(),
+                            totalPoints
+                    );
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
+        ctx.json(history);
+    }
+
 }

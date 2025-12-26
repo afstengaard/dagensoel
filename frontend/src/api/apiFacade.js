@@ -111,6 +111,10 @@ const getActiveEvent = () =>
 const updateEventStatus = (id, status) =>
   fetchWithAuth(`/api/admin/events/${id}/status`, "POST", { status });
 
+const getEventResults = (eventId) =>
+  fetchJson(`/api/events/${eventId}/results`, makeOptions("GET", false));
+
+
 //VOTES
 
 const submitVotes = (code, votes) =>
@@ -120,6 +124,11 @@ const submitVotes = (code, votes) =>
 
 const addBeerToEvent = (eventId, beer) =>
   fetchWithAuth(`/api/admin/events/${eventId}/beers`, "POST", beer);
+
+//HISTORY
+
+const getEventHistory = () =>
+  fetchJson("/api/events/history", makeOptions("GET", false));
 
 //EXPORT
 
@@ -132,8 +141,10 @@ const apiFacade = {
   getActiveEvent,
   createEvent,
   updateEventStatus,
+  getEventResults,
   submitVotes,
   addBeerToEvent,
+  getEventHistory,
 };
 
 export default apiFacade;

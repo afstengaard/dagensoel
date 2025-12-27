@@ -1,5 +1,6 @@
 package dk.dagensoel;
 
+import dk.dagensoel.bootstrap.AdminUserBootstrap;
 import dk.dagensoel.config.ApplicationConfig;
 import dk.dagensoel.config.HibernateConfig;
 import dk.dagensoel.routes.Routes;
@@ -19,6 +20,8 @@ public class Main {
 
         // Register all API routes
         Routes.register(app);
+
+        AdminUserBootstrap.seedAdminIfMissing();
 
         // Simple DB test endpoint
         app.get("/test-db", ctx -> {

@@ -46,7 +46,7 @@ public class EventController {
             return;
         }
 
-        ctx.json(new EventDTO(event, false)); // Exclude beers as they're unnecessary here.
+        ctx.json(new EventDTO(event));
     }
 
     // WRITE

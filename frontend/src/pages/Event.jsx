@@ -19,9 +19,7 @@ export default function Event() {
     <main>
       <h1>{event.name}</h1>
 
-      {event.startDate && (
-        <p>Start date: {event.startDate}</p>
-      )}
+      {event.startDate && <p>Start date: {event.startDate}</p>}
 
       <h2>Beers tasted</h2>
 
@@ -39,7 +37,7 @@ export default function Event() {
             </tr>
           </thead>
           <tbody>
-            {event.beers.map(beer => (
+            {event.beers.map((beer) => (
               <tr key={beer.id}>
                 <td>{beer.name}</td>
                 <td>{beer.brewery}</td>
@@ -61,8 +59,12 @@ export default function Event() {
         Go to vote
       </button>
 
-      {!votingOpen && (
-        <p>Voting is not open yet.</p>
+      {!votingOpen && <p>Voting is not open yet.</p>}
+
+      {event.status === "CLOSED" && (
+        <button onClick={() => navigate(`/results/${event.id}`)}>
+          View results
+        </button>
       )}
     </main>
   );

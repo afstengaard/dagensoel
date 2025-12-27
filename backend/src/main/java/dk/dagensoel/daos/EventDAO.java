@@ -41,7 +41,13 @@ public class EventDAO extends BaseDAO<Event> {
     public Event findActiveEvent() {
         try (EntityManager em = emf.createEntityManager()) {
             List<Event> events = em.createQuery(
-                            "SELECT e FROM Event e WHERE e.status IN (:open, :voting) ORDER BY e.id DESC",
+                            """
+                            SELECT DISTINCT e
+                            FROM Event e
+                            LEFT JOIN FETCH e.beers
+                            WHERE e.status IN (:open, :voting)
+                            ORDER BY e.id DESC
+                            """,
                             Event.class
                     )
                     .setParameter("open", EventStatus.OPEN)
@@ -59,6 +65,7 @@ public class EventDAO extends BaseDAO<Event> {
             return events.get(0);
         }
     }
+
 
     public boolean hasActiveEvent() {
         try (EntityManager em = emf.createEntityManager()) {

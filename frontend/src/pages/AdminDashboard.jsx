@@ -31,6 +31,15 @@ export default function AdminDashboard() {
     load();
   }, [location.pathname]);
 
+  async function reloadEvent() {
+    try {
+      const active = await api.getActiveEvent();
+      setEvent(active);
+    } catch {
+      setEvent(null);
+    }
+  }
+
   async function changeStatus(nextStatus) {
     try {
       const updated = await api.updateEventStatus(event.id, nextStatus);
@@ -41,13 +50,47 @@ export default function AdminDashboard() {
   }
 
   async function addBeer() {
+    const name = beer.name.trim();
+    const brewery = beer.brewery.trim();
+    const country = beer.country.trim();
+    const submittedBy = beer.submittedBy.trim();
+    const abv = Number(beer.abv);
+
+    // String validation
+    if (!name || !brewery || !country || !submittedBy) {
+      alert("All text fields must be filled out");
+      return;
+    }
+
+    // ABV validation
+    if (isNaN(abv)) {
+      alert("ABV must be a number");
+      return;
+    }
+
+    if (abv <= 0) {
+      alert("ABV must be greater than 0");
+      return;
+    }
+
     try {
       await api.addBeerToEvent(event.id, {
-        ...beer,
-        abv: Number(beer.abv),
+        name,
+        brewery,
+        country,
+        abv,
+        submittedBy,
       });
-      alert("Beer added");
-      setBeer({ name: "", brewery: "", country: "", abv: "", submittedBy: "" });
+
+      setBeer({
+        name: "",
+        brewery: "",
+        country: "",
+        abv: "",
+        submittedBy: "",
+      });
+
+      await reloadEvent();
     } catch {
       alert("Failed to add beer");
     }
@@ -129,6 +172,34 @@ export default function AdminDashboard() {
 
               <button onClick={addBeer}>Add beer</button>
             </>
+          )}
+          <h3>Registered beers</h3>
+
+          {event.beers.length === 0 ? (
+            <p>No beers added yet.</p>
+          ) : (
+            <table border="1" cellPadding="8">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Brewery</th>
+                  <th>Country</th>
+                  <th>ABV</th>
+                  <th>Submitted by</th>
+                </tr>
+              </thead>
+              <tbody>
+                {event.beers.map((beer) => (
+                  <tr key={beer.id}>
+                    <td>{beer.name}</td>
+                    <td>{beer.brewery}</td>
+                    <td>{beer.country}</td>
+                    <td>{beer.abv}</td>
+                    <td>{beer.submittedBy}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </>
       )}

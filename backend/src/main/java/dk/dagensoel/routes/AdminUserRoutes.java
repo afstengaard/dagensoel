@@ -13,7 +13,7 @@ public class AdminUserRoutes {
     private final AdminUserController controller = new AdminUserController();
 
     public void register(Javalin app) {
-        app.post("/api/admin/users", controller::create);
+        //app.post("/api/admin/users", controller::create); // Not necessary with AdminBootstrap
         app.get("/api/admin/me", controller::me);
     }
 }

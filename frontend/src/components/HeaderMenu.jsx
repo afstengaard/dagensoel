@@ -1,20 +1,27 @@
 import { NavLink } from "react-router-dom";
+import Countdown from "./Countdown";
 
 export default function HeaderMenu() {
   return (
     <header style={styles.header}>
       <nav style={styles.nav}>
-        <NavLink to="/" style={styles.link}>
-          Home
-        </NavLink>
+        <div style={styles.left}>
+          <NavLink to="/" style={styles.link}>
+            Home
+          </NavLink>
 
-        <NavLink to="/history" style={styles.link}>
-          History
-        </NavLink>
+          <NavLink to="/history" style={styles.link}>
+            History
+          </NavLink>
 
-        <NavLink to="/admin/login" style={styles.link}>
-          Admin
-        </NavLink>
+          <NavLink to="/admin/login" style={styles.link}>
+            Admin
+          </NavLink>
+        </div>
+
+        <div style={styles.right}>
+          <Countdown />
+        </div>
       </nav>
     </header>
   );
@@ -28,7 +35,16 @@ const styles = {
   },
   nav: {
     display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  left: {
+    display: "flex",
     gap: "16px",
+  },
+  right: {
+    fontWeight: "bold",
+    whiteSpace: "nowrap",
   },
   link: {
     textDecoration: "none",
@@ -36,3 +52,4 @@ const styles = {
     color: "#333",
   },
 };
+

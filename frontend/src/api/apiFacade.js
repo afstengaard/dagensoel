@@ -125,6 +125,13 @@ const submitVotes = (code, votes) =>
 const addBeerToEvent = (eventId, beer) =>
   fetchWithAuth(`/api/admin/events/${eventId}/beers`, "POST", beer);
 
+const searchBeers = (query) =>
+  fetchJson(
+    `/api/beers/search?q=${encodeURIComponent(query)}`,
+    makeOptions("GET", false)
+  );
+
+
 //HISTORY
 
 const getEventHistory = () =>
@@ -144,6 +151,7 @@ const apiFacade = {
   getEventResults,
   submitVotes,
   addBeerToEvent,
+  searchBeers,
   getEventHistory,
 };
 

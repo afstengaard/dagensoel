@@ -9,13 +9,13 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreateEvent from "./pages/CreateEvent";
 import HeaderMenu from "./components/HeaderMenu";
-
+import BeerHistory from "./pages/BeerHistory";
 
 export default function App() {
   return (
     <BrowserRouter>
       <HeaderMenu />
-      
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/history" element={<History />} />
@@ -23,6 +23,7 @@ export default function App() {
         <Route path="/results/:eventId" element={<EventResults />} />
         <Route path="/event/:code" element={<Event />} />
         <Route path="/event/:code/vote" element={<Vote />} />
+        <Route path="/beers" element={<BeerHistory />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/events/create" element={<CreateEvent />} />

@@ -2,6 +2,7 @@ package dk.dagensoel.config;
 
 import io.javalin.Javalin;
 import dk.dagensoel.security.JwtUtil;
+import io.javalin.http.UnauthorizedResponse;
 
 
 /**
@@ -31,13 +32,13 @@ public class ApplicationConfig {
 
         });
 
+
         // JWT auth for admin routes
         app.before("/api/admin/*", ctx -> {
             String authHeader = ctx.header("Authorization");
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                ctx.status(401).result("Missing or invalid Authorization header");
-                return;
+                throw new UnauthorizedResponse("Missing or invalid Authorization header");
             }
 
             String token = authHeader.substring("Bearer ".length());
@@ -46,7 +47,7 @@ public class ApplicationConfig {
                 String username = JwtUtil.validateToken(token);
                 ctx.attribute("username", username);
             } catch (Exception e) {
-                ctx.status(401).result("Invalid or expired token");
+                throw new UnauthorizedResponse("Invalid or expired token");
             }
         });
 

@@ -21,15 +21,20 @@ public class AdminUserController {
     public void create(Context ctx) {
         AdminUser adminUser = ctx.bodyAsClass(AdminUser.class);
 
-        // Optional: basic validation
         if (adminUser.getUsername() == null || adminUser.getPasswordHash() == null) {
             ctx.status(400).result("Username and password are required");
+            return;
+        }
+
+        if (dao.findByUsername(adminUser.getUsername()) != null) {
+            ctx.status(409).result("Admin user with this username already exists");
             return;
         }
 
         AdminUser created = dao.create(adminUser);
         ctx.status(201).json(created);
     }
+
 
     /**
      * Get the currently authenticated admin user.

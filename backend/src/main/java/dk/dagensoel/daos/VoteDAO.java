@@ -22,18 +22,22 @@ public class VoteDAO extends BaseDAO<Vote> {
 
     public boolean hasVoted(Event event, String deviceHash, VoteType type) {
         try (EntityManager em = emf.createEntityManager()) {
-            em.createQuery(
-                            "SELECT v FROM Vote v WHERE v.event = :event AND v.deviceHash = :deviceHash AND v.type = :type",
-                            Vote.class
+            Long count = em.createQuery(
+                            """
+                            SELECT COUNT(v)
+                            FROM Vote v
+                            WHERE v.event = :event
+                              AND v.deviceHash = :deviceHash
+                              AND v.type = :type
+                            """,
+                            Long.class
                     )
                     .setParameter("event", event)
                     .setParameter("deviceHash", deviceHash)
                     .setParameter("type", type)
                     .getSingleResult();
 
-            return true;
-        } catch (NoResultException e) {
-            return false;
+            return count > 0;
         }
     }
 

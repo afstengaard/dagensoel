@@ -15,7 +15,6 @@ class AdminSecurityIntegrationTest extends IntegrationTestBase {
 
     @BeforeAll
     static void setup() {
-        Main.main(new String[]{});
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = 7070;
     }
@@ -23,15 +22,8 @@ class AdminSecurityIntegrationTest extends IntegrationTestBase {
     @Test
     void adminEndpointsRequireJwt() {
         given()
-                .contentType("application/json")
-                .body("""
-                  {
-                    "name": "Test Event",
-                    "startDate": "2025-01-01"
-                  }
-                  """)
                 .when()
-                .post("/api/admin/events")
+                .get("/api/admin/me")
                 .then()
                 .statusCode(401);
     }

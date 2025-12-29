@@ -1,6 +1,5 @@
 package dk.dagensoel.dtos;
 
-import dk.dagensoel.entities.VoteType;
 import lombok.*;
 
 /**

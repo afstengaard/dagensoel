@@ -26,4 +26,18 @@ public class BeerDAO extends BaseDAO<Beer> {
                     .getResultList();
         }
     }
+
+    public List<Beer> searchByName(String query) {
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery(
+                            "SELECT b FROM Beer b " +
+                                    "WHERE LOWER(b.name) LIKE LOWER(:query)",
+                            Beer.class
+                    )
+                    .setParameter("query", "%" + query + "%")
+                    .setMaxResults(10)
+                    .getResultList();
+        }
+    }
+
 }

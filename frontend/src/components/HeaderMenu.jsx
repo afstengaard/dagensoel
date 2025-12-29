@@ -17,6 +17,10 @@ export default function HeaderMenu() {
           <NavLink to="/admin/login" style={styles.link}>
             Admin
           </NavLink>
+
+          <NavLink to="/beers" style={styles.link}>
+            Beers
+          </NavLink>
         </div>
 
         <div style={styles.right}>
@@ -52,4 +56,3 @@ const styles = {
     color: "#333",
   },
 };
-

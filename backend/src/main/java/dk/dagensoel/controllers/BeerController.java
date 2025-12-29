@@ -3,6 +3,7 @@ package dk.dagensoel.controllers;
 import dk.dagensoel.daos.BeerDAO;
 import dk.dagensoel.daos.EventDAO;
 import dk.dagensoel.dtos.BeerDTO;
+import dk.dagensoel.dtos.BeerSearchDTO;
 import dk.dagensoel.entities.Beer;
 import dk.dagensoel.entities.Event;
 import io.javalin.http.Context;
@@ -20,7 +21,6 @@ public class BeerController {
 
     // READ
 
-    // Public: get beers for an event
     public void getByEvent(Context ctx) {
         Long eventId = Long.parseLong(ctx.pathParam("eventId"));
 
@@ -31,6 +31,23 @@ public class BeerController {
 
         ctx.json(beers);
     }
+
+    public void search(Context ctx) {
+        String query = ctx.queryParam("q");
+
+        if (query == null || query.trim().length() < 2) {
+            ctx.json(List.of());
+            return;
+        }
+
+        List<BeerSearchDTO> results = beerDAO.searchByName(query.trim())
+                .stream()
+                .map(BeerSearchDTO::new)
+                .toList();
+
+        ctx.json(results);
+    }
+
 
     // WRITE (ADMIN)
 

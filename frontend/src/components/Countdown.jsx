@@ -1,19 +1,42 @@
 import { useEffect, useState } from "react";
+import api from "../api/apiFacade";
 
 export default function Countdown() {
-  const eventDate = new Date("2026-07-23T18:00:00");
-  const [timeLeft, setTimeLeft] = useState(eventDate - new Date());
+  const [text, setText] = useState("Loading…");
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(eventDate - new Date());
-    }, 1000);
-    return () => clearInterval(timer);
+    api.getActiveEvent()
+      .then(event => {
+        if (!event?.startDate) {
+          setText("No event planned");
+          return;
+        }
+
+        const [year, month, day] = event.startDate;
+        const startDate = new Date(year, month - 1, day);
+        const today = new Date();
+
+        // Normalize to midnight to avoid timezone issues
+        startDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        const diffMs = startDate - today;
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffDays > 1) {
+          setText(`${diffDays} days until next tasting`);
+        } else if (diffDays === 1) {
+          setText("1 day until next tasting");
+        } else if (diffDays === 0) {
+          setText("Today! 🍻");
+        } else {
+          setText("Event has started");
+        }
+      })
+      .catch(() => {
+        setText("No event planned");
+      });
   }, []);
 
-  if (timeLeft <= 0) return <p>It’s beer time 🍻</p>;
-
-  const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-
-  return <p>{days} days until next tasting</p>;
+  return <span>{text}</span>;
 }

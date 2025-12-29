@@ -34,27 +34,36 @@ public class HibernateConfig {
             props.put("hibernate.show_sql", "true");
             props.put("hibernate.format_sql", "true");
 
-            // ----------- Render.com POSTGRES_ variables --------------
-            String host = System.getenv("POSTGRES_HOST");
-            String db   = System.getenv("POSTGRES_DATABASE");
-            String user = System.getenv("POSTGRES_USER");
-            String pass = System.getenv("POSTGRES_PASSWORD");
+            String url  = System.getProperty("DB_URL");
+            String user = System.getProperty("DB_USER");
+            String pass = System.getProperty("DB_PASS");
 
-            if (host != null && db != null && user != null && pass != null) {
-                String jdbcUrl = "jdbc:postgresql://" + host + ":5432/" + db;
-
-                props.put("hibernate.connection.url", jdbcUrl);
+            if (url != null && user != null && pass != null) {
+                props.put("hibernate.connection.url", url);
                 props.put("hibernate.connection.username", user);
                 props.put("hibernate.connection.password", pass);
-
-                System.out.println("Using Render POSTGRES_* env vars");
+                System.out.println("Using DB from system properties");
             } else {
-                props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/dagensoel");
-                props.put("hibernate.connection.username", "postgres");
-                props.put("hibernate.connection.password", "postgres");
+                String host = System.getenv("POSTGRES_HOST");
+                String db   = System.getenv("POSTGRES_DATABASE");
+                String envUser = System.getenv("POSTGRES_USER");
+                String envPass = System.getenv("POSTGRES_PASSWORD");
 
-                System.out.println("Using local DB config");
+                if (host != null && db != null && envUser != null && envPass != null) {
+                    props.put("hibernate.connection.url",
+                            "jdbc:postgresql://" + host + ":5432/" + db);
+                    props.put("hibernate.connection.username", envUser);
+                    props.put("hibernate.connection.password", envPass);
+                    System.out.println("Using Render POSTGRES_* env vars");
+                } else {
+                    props.put("hibernate.connection.url",
+                            "jdbc:postgresql://localhost:5432/dagensoel");
+                    props.put("hibernate.connection.username", "postgres");
+                    props.put("hibernate.connection.password", "postgres");
+                    System.out.println("Using local DB config");
+                }
             }
+
 
             configuration.setProperties(props);
 

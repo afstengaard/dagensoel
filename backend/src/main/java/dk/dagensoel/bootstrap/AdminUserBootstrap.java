@@ -13,19 +13,25 @@ public class AdminUserBootstrap {
 
     public static void seedAdminIfMissing() {
 
-        String username = System.getenv("ADMIN_USERNAME");
-        String password = System.getenv("ADMIN_PASSWORD");
+        String username =
+                System.getenv("ADMIN_USERNAME") != null
+                        ? System.getenv("ADMIN_USERNAME")
+                        : System.getProperty("ADMIN_USERNAME");
 
-        // Do nothing unless both env vars are set
+        String password =
+                System.getenv("ADMIN_PASSWORD") != null
+                        ? System.getenv("ADMIN_PASSWORD")
+                        : System.getProperty("ADMIN_PASSWORD");
+
         if (username == null || password == null) {
-            System.out.println("ℹ️ Admin bootstrap skipped (env vars not set)");
+            System.out.println("Admin bootstrap skipped (no credentials provided)");
             return;
         }
 
         AdminUserDAO dao = new AdminUserDAO();
 
         if (dao.findByUsername(username) != null) {
-            System.out.println("ℹ️ Admin user already exists");
+            System.out.println("Admin user already exists");
             return;
         }
 
@@ -36,6 +42,7 @@ public class AdminUserBootstrap {
 
         dao.create(admin);
 
-        System.out.println("✅ Admin user created");
+        System.out.println("Admin user created");
     }
 }
+

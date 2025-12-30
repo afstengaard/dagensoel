@@ -27,7 +27,7 @@ jobs:
         run: docker --version
 
       - name: Run unit + integration tests
-        run: ./mvnw clean verify
+        run: mvn clean verify
 
   frontend:
     name: Frontend – Build

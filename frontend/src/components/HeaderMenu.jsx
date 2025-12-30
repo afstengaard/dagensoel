@@ -14,12 +14,12 @@ export default function HeaderMenu() {
             History
           </NavLink>
 
-          <NavLink to="/admin/login" style={styles.link}>
-            Admin
-          </NavLink>
-
           <NavLink to="/beers" style={styles.link}>
             Beers
+          </NavLink>
+
+          <NavLink to="/admin/login" style={styles.link}>
+            Admin login
           </NavLink>
         </div>
 

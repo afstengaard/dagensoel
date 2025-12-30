@@ -2,6 +2,7 @@ package dk.dagensoel.integration;
 
 import dk.dagensoel.Main;
 import dk.dagensoel.config.HibernateConfig;
+import io.restassured.RestAssured;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,9 @@ public abstract class IntegrationTestBase {
             Main.main(new String[]{});
             serverStarted = true;
         }
+
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = 7070;
     }
 
     @BeforeEach

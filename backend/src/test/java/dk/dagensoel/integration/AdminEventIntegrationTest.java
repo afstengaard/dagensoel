@@ -20,9 +20,6 @@ class AdminEventIntegrationTest extends IntegrationTestBase {
 
     @BeforeAll
     static void setup() {
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = 7070;
-
         // Login as admin
         token =
                 given()

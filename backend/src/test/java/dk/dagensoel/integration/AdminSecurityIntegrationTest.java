@@ -13,12 +13,6 @@ import static io.restassured.RestAssured.given;
  */
 class AdminSecurityIntegrationTest extends IntegrationTestBase {
 
-    @BeforeAll
-    static void setup() {
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = 7070;
-    }
-
     @Test
     void adminEndpointsRequireJwt() {
         given()

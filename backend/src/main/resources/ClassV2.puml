@@ -1,0 +1,212 @@
+@startuml
+'Generated using ChatGPT
+class Main
+
+package bootstrap {
+    class AdminUserBootstrap {
+        + seedAdminIfMissing()
+    }
+}
+
+package config {
+    class ApplicationConfig {
+        + initApp() : Javalin
+    }
+
+    class HibernateConfig {
+        - static EntityManagerFactory emf
+        + getEntityManagerFactory() : EntityManagerFactory
+    }
+}
+
+package security {
+    class JwtUtil {
+        + generateToken(username)
+        + validateToken(token)
+    }
+
+    class PasswordUtil {
+        + hash(password)
+        + verify(password, hash)
+    }
+}
+
+package entities {
+
+    class AdminUser {
+        - int id
+        - String username
+        - String passwordHash
+    }
+
+    class Event {
+        - Long id
+        - String name
+        - String code
+        - EventStatus status
+        - LocalDate startDate
+        - List<Beer> beers
+    }
+
+    class Beer {
+        - long id
+        - String name
+        - String brewery
+        - String country
+        - double abv
+        - String submittedBy
+        - Event event
+    }
+
+    class Vote {
+        - Long id
+        - Event event
+        - Beer beer
+        - String deviceHash
+        - VoteType type
+        - int points
+    }
+
+    enum EventStatus {
+        OPEN
+        VOTING
+        CLOSED
+    }
+
+    enum VoteType {
+        FAVORITE
+        SECOND
+    }
+}
+
+package daos {
+
+    abstract class BaseDAO<T> {
+        - EntityManagerFactory emf
+        - Class<T> entityClass
+        + findById(id)
+        + findAll()
+        + create(entity)
+        + update(entity)
+        + delete(id)
+    }
+
+    class AdminUserDAO {
+        + findByUsername(username)
+    }
+
+    class EventDAO {
+        + findByCode(code)
+        + findActiveEvent()
+        + findClosedEvents()
+        + hasActiveEvent()
+        + generateUniqueCode()
+    }
+
+    class BeerDAO {
+        + findByEvent(eventId)
+        + searchByName(query)
+    }
+
+    class VoteDAO {
+        + hasVoted(event, deviceHash, type)
+        + getResultsForEvent(eventId)
+        + createVotePair(event, favorite, second, deviceHash)
+    }
+}
+
+package controllers {
+
+    class AuthController {
+        + login(ctx)
+    }
+
+    class AdminUserController {
+        + create(ctx)
+        + me(ctx)
+    }
+
+    class EventController {
+        + getByCode(ctx)
+        + getActive(ctx)
+        + create(ctx)
+        + updateStatus(ctx)
+        + getResults(ctx)
+        + getHistory(ctx)
+    }
+
+    class BeerController {
+        + getByEvent(ctx)
+        + search(ctx)
+        + create(ctx)
+    }
+
+    class VoteController {
+        + create(ctx)
+    }
+}
+
+package routes {
+
+    class Routes {
+        + register(app)
+    }
+
+    class SecurityRoutes
+    class AdminUserRoutes
+    class EventRoutes
+    class BeerRoutes
+    class VoteRoutes
+}
+
+' =====================
+' Relationships
+' =====================
+
+Main --> ApplicationConfig : initializes
+Main --> Routes : registers
+Main --> AdminUserBootstrap : seeds
+Main --> HibernateConfig : uses
+
+ApplicationConfig --> JwtUtil : validates
+AuthController --> JwtUtil : generates
+AuthController --> PasswordUtil : verifies
+
+AdminUserBootstrap --> AdminUserDAO
+AdminUserBootstrap --> PasswordUtil
+
+AdminUserDAO --|> BaseDAO
+EventDAO --|> BaseDAO
+BeerDAO --|> BaseDAO
+VoteDAO --|> BaseDAO
+
+AdminUserController --> AdminUserDAO
+AuthController --> AdminUserDAO
+
+EventController --> EventDAO
+EventController --> VoteDAO
+EventController --> BeerDAO
+
+BeerController --> BeerDAO
+BeerController --> EventDAO
+
+VoteController --> VoteDAO
+VoteController --> EventDAO
+VoteController --> BeerDAO
+
+Event "1" --> "*" Beer : contains
+Beer "*" --> "1" Event : belongs to
+
+Event "1" --> "*" Vote
+Beer "1" --> "*" Vote
+
+Vote --> VoteType
+Event --> EventStatus
+
+Routes --> SecurityRoutes
+Routes --> AdminUserRoutes
+Routes --> EventRoutes
+Routes --> BeerRoutes
+Routes --> VoteRoutes
+
+@enduml

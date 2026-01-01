@@ -3,8 +3,7 @@ package dk.dagensoel.controllers;
 import dk.dagensoel.daos.BeerDAO;
 import dk.dagensoel.daos.EventDAO;
 import dk.dagensoel.daos.VoteDAO;
-import dk.dagensoel.dtos.VoteRequestDTO;
-import dk.dagensoel.dtos.VoteResponseDTO;
+import dk.dagensoel.dtos.VoteDTO;
 import dk.dagensoel.entities.*;
 import io.javalin.http.Context;
 
@@ -21,7 +20,7 @@ public class VoteController {
 
     public void create(Context ctx) {
         String code = ctx.pathParam("code");
-        VoteRequestDTO dto = ctx.bodyAsClass(VoteRequestDTO.class);
+        VoteDTO dto = ctx.bodyAsClass(VoteDTO.class);
 
         if (dto.favoriteBeerId == null || dto.secondBeerId == null) {
             ctx.status(400).result("Both votes must be selected");

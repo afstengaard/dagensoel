@@ -36,7 +36,7 @@ public class EventController {
             return;
         }
 
-        ctx.json(new EventDTO(event));
+        ctx.json(new EventDTO(event, true));
     }
 
     public void getActive(Context ctx) {
@@ -46,7 +46,7 @@ public class EventController {
                 ctx.status(404).result("No active event");
                 return;
             }
-            ctx.json(new EventDTO(event));
+            ctx.json(new EventDTO(event, true));
         } catch (IllegalStateException e) {
             ctx.status(409).result(e.getMessage());
         }
@@ -68,7 +68,7 @@ public class EventController {
         event.setStartDate(dto.startDate);
 
         Event created = eventDAO.create(event);
-        ctx.status(201).json(new EventDTO(created));
+        ctx.status(201).json(new EventDTO(created, true));
     }
 
     public void updateStatus(Context ctx) {

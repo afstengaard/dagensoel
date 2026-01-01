@@ -26,20 +26,6 @@ public class EventDTO {
     public LocalDate startDate;
     public List<BeerDTO> beers;
 
-    public EventDTO(Event event) {
-        this.id = event.getId();
-        this.name = event.getName();
-        this.code = event.getCode();
-        this.status = event.getStatus();
-        this.startDate = event.getStartDate();
-        this.beers = event.getBeers() == null
-                ? List.of()
-                : event.getBeers()
-                .stream()
-                .map(BeerDTO::new)
-                .toList();
-    }
-
     public EventDTO(Event event, boolean includeBeers) {
         this.id = event.getId();
         this.name = event.getName();

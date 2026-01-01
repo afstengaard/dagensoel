@@ -4,6 +4,7 @@ import api from "../api/apiFacade";
 
 export default function Vote() {
   const { code } = useParams();
+
   const [event, setEvent] = useState(null);
   const [message, setMessage] = useState(null);
 
@@ -65,21 +66,16 @@ export default function Vote() {
           </tr>
         </thead>
         <tbody>
-          {event.beers.map(beer => (
+          {event.beers.map((beer) => (
             <tr
               key={beer.id}
-              style={{
-                background:
-                  beer.id === favoriteBeerId
-                    ? "#2e7d32"
-                    : beer.id === secondBeerId
-                    ? "#1565c0"
-                    : "transparent",
-                color:
-                  beer.id === favoriteBeerId || beer.id === secondBeerId
-                    ? "white"
-                    : "inherit",
-              }}
+              className={
+                beer.id === favoriteBeerId
+                  ? "vote-favorite"
+                  : beer.id === secondBeerId
+                  ? "vote-second"
+                  : ""
+              }
             >
               <td>{beer.name}</td>
               <td>{beer.brewery}</td>

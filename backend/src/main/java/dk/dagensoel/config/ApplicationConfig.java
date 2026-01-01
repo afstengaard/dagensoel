@@ -35,6 +35,11 @@ public class ApplicationConfig {
         app.before("/api/admin/*", ctx -> {
             String authHeader = ctx.header("Authorization");
 
+            //Tillad
+            if (ctx.method().name().equals("OPTIONS")) {
+                return;
+            }
+
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 ctx.status(401).result("Missing or invalid Authorization header");
                 return;

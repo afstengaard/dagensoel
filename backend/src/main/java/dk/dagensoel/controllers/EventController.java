@@ -36,24 +36,27 @@ public class EventController {
             return;
         }
 
-        ctx.json(new EventDTO(event));
+        ctx.json(new EventDTO(event, true));
     }
 
     public void getActive(Context ctx) {
-        Event event = eventDAO.findActiveEvent();
-        if (event == null) {
-            ctx.status(404).result("No active event");
-            return;
+        try {
+            Event event = eventDAO.findActiveEvent();
+            if (event == null) {
+                ctx.status(404).result("No active event");
+                return;
+            }
+            ctx.json(new EventDTO(event, true));
+        } catch (IllegalStateException e) {
+            ctx.status(409).result(e.getMessage());
         }
-
-        ctx.json(new EventDTO(event));
     }
 
     // WRITE
 
     public void create(Context ctx) {
         if (eventDAO.hasActiveEvent()) {
-            ctx.status(400).result("An active event already exists");
+            ctx.status(409).result("An active event already exists");
             return;
         }
         EventDTO dto = ctx.bodyAsClass(EventDTO.class);
@@ -65,7 +68,7 @@ public class EventController {
         event.setStartDate(dto.startDate);
 
         Event created = eventDAO.create(event);
-        ctx.status(201).json(new EventDTO(created));
+        ctx.status(201).json(new EventDTO(created, true));
     }
 
     public void updateStatus(Context ctx) {
@@ -79,17 +82,23 @@ public class EventController {
         }
 
         if (!isValidTransition(event.getStatus(), dto.status)) {
-            ctx.status(400).result("Invalid event status transition");
+            ctx.status(409).result("Invalid event status transition");
             return;
         }
 
         if (dto.status == EventStatus.VOTING) {
-            Event active = eventDAO.findActiveEvent();
-            if (active != null && !active.getId().equals(event.getId())) {
-                ctx.status(400).result("Another active event already exists");
+            try {
+                Event active = eventDAO.findActiveEvent();
+                if (active != null && !active.getId().equals(event.getId())) {
+                    ctx.status(409).result("Another active event already exists");
+                    return;
+                }
+            } catch (IllegalStateException e) {
+                ctx.status(409).result(e.getMessage());
                 return;
             }
         }
+
 
         event.setStatus(dto.status);
         eventDAO.update(event);

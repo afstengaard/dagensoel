@@ -1,67 +1,207 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* ====== GLOBAL RESET (very early-2000s minimal) ====== */
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  font-family: Verdana, Arial, "Times New Roman", serif;
+  background: #cfd8e3;
+  color: #000;
 }
 
+/* ====== PAGE CONTAINER ====== */
+#root {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0;
+  background: #ffffff;
+  border: 2px solid #7a8ca5;
+}
 
+/* ====== HEADINGS ====== */
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 26px;
+  margin: 0 0 12px 0;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #7a8ca5;
 }
 
-button {
-  border-radius: 8px;
+h2 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+
+h3 {
+  font-size: 16px;
+  margin-top: 16px;
+}
+
+/* ====== LINKS ====== */
+a {
+  color: #0000ee;
+  text-decoration: underline;
+}
+
+a:visited {
+  color: #551a8b;
+}
+
+a:hover {
+  background: #ffffcc;
+}
+
+/* ====== HEADER / NAV BAR ====== */
+header {
+  background: linear-gradient(#4f6ea8, #2f4f7f);
+  border-bottom: 2px solid #1f355a;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+nav a {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 4px 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+nav a:hover {
+  border: 1px solid #ffffff;
+  background: #3b5f9e;
 }
+
+/* ====== MAIN CONTENT ====== */
+main {
+  padding: 16px;
+}
+
+/* ====== INPUTS ====== */
+input,
+select {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 14px;
+  padding: 4px;
+  margin: 4px 0;
+  border: 2px inset #aaa;
+  width: auto;
+}
+
+/* ====== BUTTONS (beveled!) ====== */
+button {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 13px;
+  padding: 4px 10px;
+  margin: 6px 0;
+  color: #000;
+  background: linear-gradient(#f0f0f0, #cfcfcf);
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #666666;
+  border-bottom: 2px solid #666666;
+  cursor: pointer;
+}
+
+button:hover {
+  background: linear-gradient(#ffffff, #dddddd);
+}
+
+button:active {
+  border-top: 2px solid #666666;
+  border-left: 2px solid #666666;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
+button:disabled {
+  color: #777;
+  background: #e0e0e0;
+  cursor: not-allowed;
+}
+
+/* ====== TABLES ====== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+th {
+  background: #e3e8f0;
+  border: 1px solid #7a8ca5;
+  padding: 6px;
+  text-align: left;
+}
+
+td {
+  border: 1px solid #7a8ca5;
+  padding: 6px;
+}
+
+tr:nth-child(even) td {
+  background: #f4f6fa;
+}
+
+/* ====== HR ====== */
+hr {
+  border: none;
+  border-top: 2px solid #7a8ca5;
+  margin: 16px 0;
+}
+
+/* ====== LISTS ====== */
+ul {
+  padding-left: 18px;
+}
+
+/* ====== MESSAGES ====== */
+p {
+  margin: 6px 0;
+}
+
+/* ====== FOOTER FEEL (optional later) ====== */
+footer {
+  background: #e3e8f0;
+  border-top: 2px solid #7a8ca5;
+  padding: 8px;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ====== VOTING ROW HIGHLIGHTS ====== */
+
+/* GOLD – Favorite */
+table tr.vote-favorite td {
+  background: linear-gradient(#ffec8b, #d4af37);
+  color: #000;
+  font-weight: bold;
+}
+
+/* SILVER – Second choice */
+table tr.vote-second td {
+  background: linear-gradient(#eeeeee, #bfc1c2);
+  color: #000;
+  font-weight: bold;
+}
+
+/* Override zebra striping */
+table tr.vote-favorite td,
+table tr.vote-second td {
+  background-clip: padding-box;
+}
+
+/* Buttons inside selected rows */
+table tr.vote-favorite button,
+table tr.vote-second button {
+  font-weight: bold;
+  background: linear-gradient(#ffffff, #dddddd);
+}
+

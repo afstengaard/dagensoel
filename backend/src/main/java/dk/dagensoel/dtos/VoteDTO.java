@@ -11,7 +11,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VoteRequestDTO {
+public class VoteDTO {
     public Long favoriteBeerId;
     public Long secondBeerId;
 }

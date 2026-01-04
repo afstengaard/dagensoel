@@ -1,39 +1,29 @@
 package dk.dagensoel.acceptance;
 
-import dk.dagensoel.integration.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 /**
- * Purpose: Test that a user can search for beers from previous events. Generated with help from ChatGPT.
+ * Purpose: Test that a user can search for beers from previous events as intended in US3. Made with help from ChatGPT.
  *
  * @Author: Anton Friis Stengaard
  */
-class BeerSearchAcceptanceTest extends IntegrationTestBase {
+class BeerSearchAcceptanceTest extends AcceptanceTestBase {
 
+    /**
+     * US3
+     * As a user, I want to browse beers from previous competitions
+     * so that I do not bring a beer that has already been used.
+     */
     @Test
     void userCanSearchForBeersFromPreviousEvents() {
 
-        // ---------- Admin logs in ----------
-        String adminToken =
-                given()
-                        .contentType("application/json")
-                        .body("""
-                                {
-                                  "username": "admin",
-                                  "password": "password"
-                                }
-                                """)
-                        .when()
-                        .post("/api/auth/login")
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .path("token");
+        // Admin logs in
+        String adminToken = loginAsAdmin();
 
-        // ---------- Admin creates event ----------
+        // Admin creates a past event
         Number eventIdNumber =
                 given()
                         .header("Authorization", "Bearer " + adminToken)
@@ -53,36 +43,31 @@ class BeerSearchAcceptanceTest extends IntegrationTestBase {
 
         Long eventId = eventIdNumber.longValue();
 
-        // ---------- Admin adds beers ----------
+        // Admin adds beers to the event
         addBeer(adminToken, eventId, "Test IPA");
         addBeer(adminToken, eventId, "Test Stout");
 
-        // ---------- Admin opens voting ----------
+        // Admin opens voting
         given()
                 .header("Authorization", "Bearer " + adminToken)
                 .contentType("application/json")
-                .body("""
-                        { "status": "VOTING" }
-                        """)
+                .body("{ \"status\": \"VOTING\" }")
                 .when()
                 .post("/api/admin/events/" + eventId + "/status")
                 .then()
                 .statusCode(200);
 
-// ---------- Admin closes event ----------
+        // Admin closes the event
         given()
                 .header("Authorization", "Bearer " + adminToken)
                 .contentType("application/json")
-                .body("""
-                        { "status": "CLOSED" }
-                        """)
+                .body("{ \"status\": \"CLOSED\" }")
                 .when()
                 .post("/api/admin/events/" + eventId + "/status")
                 .then()
                 .statusCode(200);
 
-
-        // ---------- User searches beers ----------
+        // User searches for beers from previous events
         given()
                 .queryParam("q", "IPA")
                 .when()
@@ -92,24 +77,5 @@ class BeerSearchAcceptanceTest extends IntegrationTestBase {
                 .body("$", not(empty()))
                 .body("beerName", hasItem("Test IPA"))
                 .body("eventId", not(empty()));
-    }
-
-    private void addBeer(String token, Long eventId, String name) {
-        given()
-                .header("Authorization", "Bearer " + token)
-                .contentType("application/json")
-                .body("""
-                        {
-                          "name": "%s",
-                          "brewery": "Test Brewery",
-                          "country": "DK",
-                          "abv": 5.5,
-                          "submittedBy": "Tester"
-                        }
-                        """.formatted(name))
-                .when()
-                .post("/api/admin/events/" + eventId + "/beers")
-                .then()
-                .statusCode(201);
     }
 }

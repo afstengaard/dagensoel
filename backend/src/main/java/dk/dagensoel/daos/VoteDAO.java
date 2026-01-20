@@ -45,11 +45,14 @@ public class VoteDAO extends BaseDAO<Vote> {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createQuery(
                             """
-                            SELECT v.beer.id, v.beer.name, SUM(v.points)
-                            FROM Vote v
-                            WHERE v.event.id = :eventId
-                            GROUP BY v.beer.id, v.beer.name
-                            ORDER BY SUM(v.points) DESC
+                            SELECT b.id, b.name, COALESCE(SUM(v.points), 0)
+                            FROM Beer b
+                            LEFT JOIN Vote v
+                                ON v.beer = b
+                               AND v.event.id = :eventId
+                            WHERE b.event.id = :eventId
+                            GROUP BY b.id, b.name
+                            ORDER BY COALESCE(SUM(v.points), 0) DESC
                             """,
                             Object[].class
                     )
@@ -57,6 +60,7 @@ public class VoteDAO extends BaseDAO<Vote> {
                     .getResultList();
         }
     }
+
 
     public void createVotePair(
             Event event,

@@ -1,7 +1,18 @@
 import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Countdown from "./Countdown";
+import api from "../api/apiFacade";
 
 export default function HeaderMenu() {
+  const [loggedIn, setLoggedIn] = useState(api.loggedIn());
+
+  useEffect(() => {
+    const updateLoginState = () => setLoggedIn(api.loggedIn());
+
+    window.addEventListener("loginChanged", updateLoginState);
+    return () => window.removeEventListener("loginChanged", updateLoginState);
+  }, []);
+
   return (
     <header style={styles.header}>
       <nav style={styles.nav}>
@@ -18,9 +29,21 @@ export default function HeaderMenu() {
             Beers
           </NavLink>
 
-          <NavLink to="/admin/login" style={styles.link}>
-            Admin login
-          </NavLink>
+          {loggedIn ? (
+            <NavLink to="/admin" style={styles.link}>
+              Admin dashboard
+            </NavLink>
+          ) : (
+            <NavLink to="/admin/login" style={styles.link}>
+              Admin login
+            </NavLink>
+          )}
+
+          {loggedIn && (
+            <button onClick={api.logout} style={styles.link}>
+              Logout
+            </button>
+          )}
         </div>
 
         <div style={styles.right}>

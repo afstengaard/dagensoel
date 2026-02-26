@@ -21,6 +21,7 @@ public class BeerSearchDTO {
     public String beerName;
     public Long eventId;
     public String eventName;
+    public String submittedBy;
     public LocalDate eventDate;
 
     public BeerSearchDTO(Beer beer) {
@@ -28,6 +29,7 @@ public class BeerSearchDTO {
         this.beerName = beer.getName();
         this.eventId = beer.getEvent().getId();
         this.eventName = beer.getEvent().getName();
+        this.submittedBy = beer.getSubmittedBy();
         this.eventDate = beer.getEvent().getStartDate();
     }
 }

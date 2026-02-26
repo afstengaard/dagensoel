@@ -1,13 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../api/apiFacade";
 
 export default function BeerHistory() {
   const [query, setQuery] = useState("");
   const [allBeers, setAllBeers] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -24,30 +21,37 @@ export default function BeerHistory() {
     fetchHistory();
   }, []);
 
-  const filteredBeers = useMemo(() => {
-    return allBeers.filter((beer) =>
-      beer.beerName.toLowerCase().includes(query.toLowerCase())
-    );
-  }, [query, allBeers]);
+  const extractYear = (eventName) => {
+  const match = eventName?.match(/\d{4}/);
+  return match ? match[0] : "";
+};
 
-  const handleSelect = (eventId) => {
-    navigate(`/results/${eventId}`);
-  };
+const filteredBeers = useMemo(() => {
+  const search = query.toLowerCase();
+
+  return allBeers.filter((beer) => {
+    const year = extractYear(beer.eventName);
+
+    return (
+      beer.beerName.toLowerCase().includes(search) ||
+      beer.submittedBy?.toLowerCase().includes(search) ||
+      year.includes(search)
+    );
+  });
+}, [query, allBeers]);
 
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "1rem" }}>
+    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "1rem" }}>
       <h1>Beer History</h1>
-      <p>Browse all beers that have competed in previous events</p>
 
       <input
         type="text"
+        placeholder="Search beer..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search beer..."
         style={{
           width: "100%",
           padding: "0.75rem",
-          fontSize: "1rem",
           marginBottom: "1rem",
         }}
       />
@@ -55,40 +59,49 @@ export default function BeerHistory() {
       {loading && <p>Loading beers...</p>}
 
       {!loading && (
-        <ul
+        <table
           style={{
-            listStyle: "none",
-            padding: 0,
-            border: "1px solid #ddd",
-            borderRadius: "6px",
-            maxHeight: "500px",
-            overflowY: "auto",
+            width: "100%",
+            borderCollapse: "collapse",
           }}
         >
-          {filteredBeers.map((beer) => (
-            <li
-              key={`${beer.beerId}-${beer.eventId}`}
-              onClick={() => handleSelect(beer.eventId)}
-              style={{
-                padding: "0.75rem",
-                cursor: "pointer",
-                borderBottom: "1px solid #eee",
-              }}
-            >
-              <strong>{beer.beerName}</strong>
-              <div style={{ fontSize: "0.85rem", opacity: 0.7 }}>
-                {beer.eventName}
-              </div>
-            </li>
-          ))}
+          <thead>
+            <tr style={{ backgroundColor: "#f5f5f5" }}>
+              <th style={thStyle}>Beer</th>
+              <th style={thStyle}>Submitted By</th>
+              <th style={thStyle}>Year</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredBeers.map((beer) => (
+              <tr key={`${beer.beerId}-${beer.eventId}`}>
+                <td style={tdStyle}>{beer.beerName}</td>
+                <td style={tdStyle}>{beer.submittedBy}</td>
+                <td style={tdStyle}>{extractYear(beer.eventName)}</td>
+              </tr>
+            ))}
 
-          {filteredBeers.length === 0 && (
-            <li style={{ padding: "0.75rem", opacity: 0.6 }}>
-              No beers match your search
-            </li>
-          )}
-        </ul>
+            {filteredBeers.length === 0 && (
+              <tr>
+                <td colSpan="3" style={{ padding: "1rem", textAlign: "center", opacity: 0.6 }}>
+                  No beers match your search
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       )}
     </div>
   );
 }
+
+const thStyle = {
+  textAlign: "left",
+  padding: "0.75rem",
+  borderBottom: "2px solid #ddd",
+};
+
+const tdStyle = {
+  padding: "0.75rem",
+  borderBottom: "1px solid #eee",
+};

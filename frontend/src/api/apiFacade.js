@@ -131,6 +131,9 @@ const searchBeers = (query) =>
     makeOptions("GET", false)
   );
 
+const getBeerHistory = () =>
+  fetchJson("/api/beers/history", makeOptions("GET", false));
+
 
 //HISTORY
 
@@ -151,6 +154,7 @@ const apiFacade = {
   getEventResults,
   submitVotes,
   addBeerToEvent,
+  getBeerHistory,
   searchBeers,
   getEventHistory,
 };

@@ -17,7 +17,7 @@ public class BeerRoutes {
         // Public
         app.get("/api/events/{eventId}/beers", controller::getByEvent);
         app.get("/api/beers/search", controller::search);
-
+        app.get("/api/beers/history", controller::getHistory);
 
         // Admin
         app.post("/api/admin/events/{eventId}/beers", controller::create);

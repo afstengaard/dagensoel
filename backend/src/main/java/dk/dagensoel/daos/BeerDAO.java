@@ -40,4 +40,13 @@ public class BeerDAO extends BaseDAO<Beer> {
         }
     }
 
+    public List<Beer> findAllWithEvent() {
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery(
+                    "SELECT b FROM Beer b JOIN FETCH b.event",
+                    Beer.class
+            ).getResultList();
+        }
+    }
+
 }

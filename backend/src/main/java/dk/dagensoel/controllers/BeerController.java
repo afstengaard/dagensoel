@@ -48,6 +48,15 @@ public class BeerController {
         ctx.json(results);
     }
 
+    public void getHistory(Context ctx) {
+        List<BeerSearchDTO> beers = beerDAO.findAllWithEvent()
+                .stream()
+                .map(BeerSearchDTO::new)
+                .toList();
+
+        ctx.json(beers);
+    }
+
 
     // WRITE (ADMIN)
 

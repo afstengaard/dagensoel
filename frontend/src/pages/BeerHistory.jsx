@@ -21,24 +21,19 @@ export default function BeerHistory() {
     fetchHistory();
   }, []);
 
-  const extractYear = (eventName) => {
-  const match = eventName?.match(/\d{4}/);
-  return match ? match[0] : "";
-};
+  const filteredBeers = useMemo(() => {
+    const search = query.trim().toLowerCase();
 
-const filteredBeers = useMemo(() => {
-  const search = query.toLowerCase();
+    return allBeers.filter((beer) => {
+      const year = beer.eventDate?.[0]?.toString() || "";
 
-  return allBeers.filter((beer) => {
-    const year = extractYear(beer.eventName);
-
-    return (
-      beer.beerName.toLowerCase().includes(search) ||
-      beer.submittedBy?.toLowerCase().includes(search) ||
-      year.includes(search)
-    );
-  });
-}, [query, allBeers]);
+      return (
+        beer.beerName.toLowerCase().includes(search) ||
+        beer.submittedBy?.toLowerCase().includes(search) ||
+        year.includes(search)
+      );
+    });
+  }, [query, allBeers]);
 
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "1rem" }}>
@@ -46,7 +41,7 @@ const filteredBeers = useMemo(() => {
 
       <input
         type="text"
-        placeholder="Search beer..."
+        placeholder="Search beer, person or year..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         style={{
@@ -77,13 +72,20 @@ const filteredBeers = useMemo(() => {
               <tr key={`${beer.beerId}-${beer.eventId}`}>
                 <td style={tdStyle}>{beer.beerName}</td>
                 <td style={tdStyle}>{beer.submittedBy}</td>
-                <td style={tdStyle}>{extractYear(beer.eventName)}</td>
+                <td style={tdStyle}>{beer.eventDate?.[0]}</td>
               </tr>
             ))}
 
             {filteredBeers.length === 0 && (
               <tr>
-                <td colSpan="3" style={{ padding: "1rem", textAlign: "center", opacity: 0.6 }}>
+                <td
+                  colSpan="3"
+                  style={{
+                    padding: "1rem",
+                    textAlign: "center",
+                    opacity: 0.6,
+                  }}
+                >
                   No beers match your search
                 </td>
               </tr>

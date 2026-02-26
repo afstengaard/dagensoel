@@ -2,6 +2,9 @@ package dk.dagensoel.dtos;
 
 import dk.dagensoel.entities.Beer;
 import lombok.*;
+
+import java.time.LocalDate;
+
 /**
  * Purpose: Used when a user checks if a beer has been tasted before.
  *
@@ -18,11 +21,13 @@ public class BeerSearchDTO {
     public String beerName;
     public Long eventId;
     public String eventName;
+    public LocalDate eventDate;
 
     public BeerSearchDTO(Beer beer) {
         this.beerId = beer.getId();
         this.beerName = beer.getName();
         this.eventId = beer.getEvent().getId();
         this.eventName = beer.getEvent().getName();
+        this.eventDate = beer.getEvent().getStartDate();
     }
 }

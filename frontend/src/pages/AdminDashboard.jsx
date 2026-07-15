@@ -4,6 +4,7 @@ import api from "../api/apiFacade";
 
 export default function AdminDashboard() {
   const [event, setEvent] = useState(null);
+  const [pastEvents, setPastEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,10 +27,67 @@ export default function AdminDashboard() {
       } finally {
         setLoading(false);
       }
+
+      try {
+        const history = await api.getEventHistory();
+        setPastEvents(history);
+      } catch {
+        setPastEvents([]);
+      }
     }
 
     load();
   }, [location.pathname]);
+
+  async function reloadPastEvents() {
+    try {
+      const history = await api.getEventHistory();
+      setPastEvents(history);
+    } catch {
+      setPastEvents([]);
+    }
+  }
+
+  async function removeEvent(id, name) {
+    if (!confirm(`Delete "${name}" and all its beers/votes? This cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await api.deleteEvent(id);
+      await reloadPastEvents();
+    } catch {
+      alert("Failed to delete event");
+    }
+  }
+
+  const [importFile, setImportFile] = useState(null);
+  const [importing, setImporting] = useState(false);
+  const [importStatus, setImportStatus] = useState(null);
+
+  async function runImport() {
+    if (!importFile) {
+      alert("Choose a CSV file first");
+      return;
+    }
+
+    setImporting(true);
+    setImportStatus(null);
+    try {
+      const summary = await api.importHistoricalData(importFile);
+      setImportStatus(
+        `Done: ${summary.eventsCreated} event(s) created, ` +
+          `${summary.eventsSkipped} skipped (already existed), ` +
+          `${summary.beersCreated} beer(s) created.`
+      );
+      setImportFile(null);
+      await reloadPastEvents();
+    } catch (err) {
+      setImportStatus(`Import failed: ${err.message}`);
+    } finally {
+      setImporting(false);
+    }
+  }
 
   async function reloadEvent() {
     try {
@@ -202,6 +260,55 @@ export default function AdminDashboard() {
             </table>
           )}
         </>
+      )}
+
+      <hr />
+      <h3>Import historical data</h3>
+      <p>
+        Upload the old "Oversigt" CSV export to bulk-create closed events
+        with imported results. Safe to run more than once — events that
+        already exist (by name) are skipped.
+      </p>
+      <input
+        type="file"
+        accept=".csv"
+        onChange={(e) => setImportFile(e.target.files[0] || null)}
+      />
+      <button onClick={runImport} disabled={importing}>
+        {importing ? "Importing…" : "Import CSV"}
+      </button>
+      {importStatus && <p>{importStatus}</p>}
+
+      <hr />
+      <h3>Previous events</h3>
+
+      {pastEvents.length === 0 ? (
+        <p>No previous events.</p>
+      ) : (
+        <table border="1" cellPadding="8">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Date</th>
+              <th>Winning beer</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {pastEvents.map((row) => (
+              <tr key={row.eventId}>
+                <td>{row.eventName}</td>
+                <td>{new Date(row.eventDate).toLocaleDateString("da-DK")}</td>
+                <td>{row.beerName}</td>
+                <td>
+                  <button onClick={() => removeEvent(row.eventId, row.eventName)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </main>
   );

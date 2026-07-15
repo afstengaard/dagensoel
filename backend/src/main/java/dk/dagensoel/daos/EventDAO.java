@@ -87,4 +87,23 @@ public class EventDAO extends BaseDAO<Event> {
                 .substring(0, 6)
                 .toUpperCase();
     }
+
+    /**
+     * Deletes an event, its beers (cascade = ALL on Event.beers) and any
+     * votes tied to it. Votes aren't cascaded automatically since there's
+     * no mapping from Event/Beer back to Vote, so they're removed
+     * explicitly first to avoid a foreign key violation.
+     */
+    public void deleteEvent(Long id) {
+        runInTransaction(em -> {
+            em.createQuery("DELETE FROM Vote v WHERE v.event.id = :id")
+                    .setParameter("id", id)
+                    .executeUpdate();
+
+            Event event = em.find(Event.class, id);
+            if (event != null) {
+                em.remove(event);
+            }
+        });
+    }
 }

@@ -25,6 +25,13 @@ public class Beer {
     private double abv;
     private String submittedBy;
 
+    /**
+     * Total points for this beer when it comes from a historical/imported
+     * result (e.g. the old Microsoft List) rather than from live Vote rows.
+     * Null means "no imported result" - live votes are used instead.
+     */
+    private Integer importedPoints;
+
     @ManyToOne(optional = false)
     private Event event;
 }

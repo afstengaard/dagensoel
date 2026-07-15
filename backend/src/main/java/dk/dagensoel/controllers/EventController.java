@@ -113,6 +113,24 @@ public class EventController {
                 || (current == EventStatus.VOTING && next == EventStatus.CLOSED);
     }
 
+    public void delete(Context ctx) {
+        Long id = Long.parseLong(ctx.pathParam("id"));
+
+        Event event = eventDAO.findById(id);
+        if (event == null) {
+            ctx.status(404).result("Event not found");
+            return;
+        }
+
+        if (event.getStatus() != EventStatus.CLOSED) {
+            ctx.status(409).result("Only closed events can be deleted");
+            return;
+        }
+
+        eventDAO.deleteEvent(id);
+        ctx.status(204);
+    }
+
     public void getResults(Context ctx) {
         Long eventId = Long.parseLong(ctx.pathParam("id"));
 
@@ -139,6 +157,7 @@ public class EventController {
 
                             return new ResultDTO(
                                     event.getId(),
+                                    event.getName(),
                                     event.getStartDate(),
                                     beerId,
                                     beerName,
@@ -179,6 +198,7 @@ public class EventController {
 
                     return new ResultDTO(
                             event.getId(),
+                            event.getName(),
                             event.getStartDate(),
                             beerId,
                             beerName,

@@ -45,14 +45,15 @@ public class VoteDAO extends BaseDAO<Vote> {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createQuery(
                             """
-                            SELECT b.id, b.name, COALESCE(SUM(v.points), 0)
+                            SELECT b.id, b.name,
+                                   COALESCE(SUM(v.points), 0) + COALESCE(b.importedPoints, 0)
                             FROM Beer b
                             LEFT JOIN Vote v
                                 ON v.beer = b
                                AND v.event.id = :eventId
                             WHERE b.event.id = :eventId
-                            GROUP BY b.id, b.name
-                            ORDER BY COALESCE(SUM(v.points), 0) DESC
+                            GROUP BY b.id, b.name, b.importedPoints
+                            ORDER BY COALESCE(SUM(v.points), 0) + COALESCE(b.importedPoints, 0) DESC
                             """,
                             Object[].class
                     )

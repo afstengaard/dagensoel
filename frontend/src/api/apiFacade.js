@@ -111,6 +111,24 @@ const getActiveEvent = () =>
 const updateEventStatus = (id, status) =>
   fetchWithAuth(`/api/admin/events/${id}/status`, "POST", { status });
 
+const deleteEvent = (id) =>
+  fetchNoContent(`/api/admin/events/${id}`, makeOptions("DELETE", true));
+
+const importHistoricalData = (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const opts = { method: "POST", headers: {}, body: formData };
+  // Note: no Content-Type header here on purpose - the browser sets the
+  // multipart boundary itself when the body is a FormData object.
+  if (loggedIn()) {
+    opts.headers["Authorization"] = `Bearer ${getToken()}`;
+  }
+  opts.headers["X-Device-Id"] = getDeviceId();
+
+  return fetchJson("/api/admin/import/historical", opts);
+};
+
 const getEventResults = (eventId) =>
   fetchJson(`/api/events/${eventId}/results`, makeOptions("GET", false));
 
@@ -151,6 +169,8 @@ const apiFacade = {
   getActiveEvent,
   createEvent,
   updateEventStatus,
+  deleteEvent,
+  importHistoricalData,
   getEventResults,
   submitVotes,
   addBeerToEvent,

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 public class ResultDTO {
 
     public Long eventId;
+    public String eventName;
     public LocalDate eventDate;
 
     public Long beerId;
@@ -20,6 +21,7 @@ public class ResultDTO {
 
     public ResultDTO(
             Long eventId,
+            String eventName,
             LocalDate eventDate,
             Long beerId,
             String beerName,
@@ -27,6 +29,7 @@ public class ResultDTO {
             int totalPoints
     ) {
         this.eventId = eventId;
+        this.eventName = eventName;
         this.eventDate = eventDate;
         this.beerId = beerId;
         this.beerName = beerName;

@@ -15,5 +15,6 @@ public class Routes {
         new EventRoutes().register(app);
         new BeerRoutes().register(app);
         new VoteRoutes().register(app);
+        new ImportRoutes().register(app);
     }
 }

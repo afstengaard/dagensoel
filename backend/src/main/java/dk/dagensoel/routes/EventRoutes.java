@@ -25,5 +25,6 @@ public class EventRoutes {
         // Admin (JWT-protected)
         app.post("/api/admin/events/{id}/status", controller::updateStatus);
         app.post("/api/admin/events", controller::create);
+        app.delete("/api/admin/events/{id}", controller::delete);
     }
 }

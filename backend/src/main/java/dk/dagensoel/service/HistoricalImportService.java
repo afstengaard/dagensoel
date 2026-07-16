@@ -107,6 +107,8 @@ public class HistoricalImportService {
                         .abv(parseDouble(row.get("Procent")))
                         .submittedBy(emptyToNull(row.get("Navn")))
                         .importedPoints(parseIntOrNull(row.get("Antal stemmer")))
+                        .untappdLink(emptyToNull(row.get("Link")))
+                        .evening(emptyToNull(row.get("Aften")))
                         // Note: the CSV's "Billede" column is a local filename
                         // from the old system, not a usable URL, so it's not
                         // imported. Add an image afterwards via the admin UI.

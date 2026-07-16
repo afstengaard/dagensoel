@@ -165,6 +165,8 @@ public class EventController {
                                     beer.getAbv(),
                                     beer.getSubmittedBy(),
                                     beer.getImageUrl(),
+                                    beer.getUntappdLink(),
+                                    beer.getEvening(),
                                     totalPoints
                             );
                         })
@@ -209,6 +211,8 @@ public class EventController {
                             beer.getAbv(),
                             beer.getSubmittedBy(),
                             beer.getImageUrl(),
+                            beer.getUntappdLink(),
+                            beer.getEvening(),
                             totalPoints
                     );
                 })

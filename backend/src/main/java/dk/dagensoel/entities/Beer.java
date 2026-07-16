@@ -41,6 +41,19 @@ public class Beer {
      */
     private String imageUrl;
 
+    /**
+     * Link to the beer's Untappd page, if known.
+     */
+    private String untappdLink;
+
+    /**
+     * Which evening of a (possibly multi-evening) tasting the beer was
+     * served on, e.g. "Første aften" / "Anden aften". Free text rather
+     * than an enum since it's just a display label tied to how a given
+     * year's event was organized.
+     */
+    private String evening;
+
     @ManyToOne(optional = false)
     private Event event;
 }

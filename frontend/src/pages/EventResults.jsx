@@ -48,6 +48,8 @@ export default function EventResults() {
               <th>Beer</th>
               <th>Brewery</th>
               <th>ABV</th>
+              <th>Evening</th>
+              <th>Untappd</th>
               <th>Submitted By</th>
               <th>Points</th>
               {isAdmin && <th></th>}
@@ -71,6 +73,14 @@ export default function EventResults() {
                 <td>{r.beerName}</td>
                 <td>{r.brewery}</td>
                 <td>{r.abv ? `${r.abv}%` : ""}</td>
+                <td>{r.evening}</td>
+                <td>
+                  {r.untappdLink ? (
+                    <a href={r.untappdLink} target="_blank" rel="noreferrer">
+                      Untappd
+                    </a>
+                  ) : null}
+                </td>
                 <td>{r.submittedBy}</td>
                 <td>{r.totalPoints}</td>
                 {isAdmin && (

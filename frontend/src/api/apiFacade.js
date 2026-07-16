@@ -143,6 +143,9 @@ const submitVotes = (code, votes) =>
 const addBeerToEvent = (eventId, beer) =>
   fetchWithAuth(`/api/admin/events/${eventId}/beers`, "POST", beer);
 
+const setBeerImageUrl = (beerId, imageUrl) =>
+  fetchWithAuth(`/api/admin/beers/${beerId}/image`, "POST", { imageUrl });
+
 const searchBeers = (query) =>
   fetchJson(
     `/api/beers/search?q=${encodeURIComponent(query)}`,
@@ -174,6 +177,7 @@ const apiFacade = {
   getEventResults,
   submitVotes,
   addBeerToEvent,
+  setBeerImageUrl,
   getBeerHistory,
   searchBeers,
   getEventHistory,

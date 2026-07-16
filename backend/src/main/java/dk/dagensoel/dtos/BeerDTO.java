@@ -21,6 +21,7 @@ public class BeerDTO {
     public String country;
     public double abv;
     public String submittedBy;
+    public String imageUrl;
 
     public BeerDTO(Beer beer) {
         this.id = beer.getId();
@@ -29,6 +30,7 @@ public class BeerDTO {
         this.country = beer.getCountry();
         this.abv = beer.getAbv();
         this.submittedBy = beer.getSubmittedBy();
+        this.imageUrl = beer.getImageUrl();
     }
 }
 

@@ -32,6 +32,15 @@ public class Beer {
      */
     private Integer importedPoints;
 
+    /**
+     * A direct URL to a photo of this beer (e.g. hosted on an external
+     * image host or in the GitHub repo itself). We deliberately don't
+     * store/serve image files on the app server, since Render's free tier
+     * has an ephemeral filesystem - anything written to local disk is
+     * lost on every redeploy/restart.
+     */
+    private String imageUrl;
+
     @ManyToOne(optional = false)
     private Event event;
 }

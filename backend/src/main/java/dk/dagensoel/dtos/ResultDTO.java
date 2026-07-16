@@ -15,7 +15,10 @@ public class ResultDTO {
 
     public Long beerId;
     public String beerName;
+    public String brewery;
+    public double abv;
     public String submittedBy;
+    public String imageUrl;
 
     public int totalPoints;
 
@@ -25,7 +28,10 @@ public class ResultDTO {
             LocalDate eventDate,
             Long beerId,
             String beerName,
+            String brewery,
+            double abv,
             String submittedBy,
+            String imageUrl,
             int totalPoints
     ) {
         this.eventId = eventId;
@@ -33,8 +39,10 @@ public class ResultDTO {
         this.eventDate = eventDate;
         this.beerId = beerId;
         this.beerName = beerName;
+        this.brewery = brewery;
+        this.abv = abv;
         this.submittedBy = submittedBy;
+        this.imageUrl = imageUrl;
         this.totalPoints = totalPoints;
     }
 }
-

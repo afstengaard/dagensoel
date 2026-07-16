@@ -161,7 +161,10 @@ public class EventController {
                                     event.getStartDate(),
                                     beerId,
                                     beerName,
+                                    beer.getBrewery(),
+                                    beer.getAbv(),
                                     beer.getSubmittedBy(),
+                                    beer.getImageUrl(),
                                     totalPoints
                             );
                         })
@@ -202,7 +205,10 @@ public class EventController {
                             event.getStartDate(),
                             beerId,
                             beerName,
+                            beer.getBrewery(),
+                            beer.getAbv(),
                             beer.getSubmittedBy(),
+                            beer.getImageUrl(),
                             totalPoints
                     );
                 })

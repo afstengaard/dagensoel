@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import api from "../api/apiFacade";
 
 export default function BeerHistory() {
@@ -29,6 +30,7 @@ export default function BeerHistory() {
 
       return (
         beer.beerName.toLowerCase().includes(search) ||
+        beer.brewery?.toLowerCase().includes(search) ||
         beer.submittedBy?.toLowerCase().includes(search) ||
         year.includes(search)
       );
@@ -36,12 +38,12 @@ export default function BeerHistory() {
   }, [query, allBeers]);
 
   return (
-    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "1rem" }}>
+    <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "1rem" }}>
       <h1>Beer History</h1>
 
       <input
         type="text"
-        placeholder="Search beer, person or year..."
+        placeholder="Search beer, brewery, person or year..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         style={{
@@ -62,16 +64,47 @@ export default function BeerHistory() {
         >
           <thead>
             <tr style={{ backgroundColor: "#f5f5f5" }}>
+              <th style={thStyle}>Image</th>
               <th style={thStyle}>Beer</th>
+              <th style={thStyle}>Brewery</th>
+              <th style={thStyle}>ABV</th>
+              <th style={thStyle}>Evening</th>
+              <th style={thStyle}>Untappd</th>
               <th style={thStyle}>Submitted By</th>
+              <th style={thStyle}>Event</th>
               <th style={thStyle}>Year</th>
             </tr>
           </thead>
           <tbody>
             {filteredBeers.map((beer) => (
               <tr key={`${beer.beerId}-${beer.eventId}`}>
+                <td style={tdStyle}>
+                  {beer.imageUrl ? (
+                    <img
+                      src={beer.imageUrl}
+                      alt={beer.beerName}
+                      style={{ width: 48, height: 48, objectFit: "cover" }}
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  ) : null}
+                </td>
                 <td style={tdStyle}>{beer.beerName}</td>
+                <td style={tdStyle}>{beer.brewery}</td>
+                <td style={tdStyle}>{beer.abv ? `${beer.abv}%` : ""}</td>
+                <td style={tdStyle}>{beer.evening}</td>
+                <td style={tdStyle}>
+                  {beer.untappdLink ? (
+                    <a href={beer.untappdLink} target="_blank" rel="noreferrer">
+                      Untappd
+                    </a>
+                  ) : null}
+                </td>
                 <td style={tdStyle}>{beer.submittedBy}</td>
+                <td style={tdStyle}>
+                  <Link to={`/results/${beer.eventId}`}>{beer.eventName}</Link>
+                </td>
                 <td style={tdStyle}>{beer.eventDate?.[0]}</td>
               </tr>
             ))}
@@ -79,7 +112,7 @@ export default function BeerHistory() {
             {filteredBeers.length === 0 && (
               <tr>
                 <td
-                  colSpan="3"
+                  colSpan="9"
                   style={{
                     padding: "1rem",
                     textAlign: "center",

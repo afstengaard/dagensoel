@@ -6,7 +6,10 @@ import lombok.*;
 import java.time.LocalDate;
 
 /**
- * Purpose: Used when a user checks if a beer has been tasted before.
+ * Purpose: Used when a user checks if a beer has been tasted before, and
+ * for the full all-time beer overview - carries the same fields as the
+ * per-event results view (ResultDTO) so both screens show consistent
+ * information about a beer.
  *
  * @Author: Anton Friis Stengaard
  */
@@ -19,6 +22,12 @@ public class BeerSearchDTO {
 
     public Long beerId;
     public String beerName;
+    public String brewery;
+    public double abv;
+    public String imageUrl;
+    public String untappdLink;
+    public String evening;
+
     public Long eventId;
     public String eventName;
     public String submittedBy;
@@ -27,6 +36,11 @@ public class BeerSearchDTO {
     public BeerSearchDTO(Beer beer) {
         this.beerId = beer.getId();
         this.beerName = beer.getName();
+        this.brewery = beer.getBrewery();
+        this.abv = beer.getAbv();
+        this.imageUrl = beer.getImageUrl();
+        this.untappdLink = beer.getUntappdLink();
+        this.evening = beer.getEvening();
         this.eventId = beer.getEvent().getId();
         this.eventName = beer.getEvent().getName();
         this.submittedBy = beer.getSubmittedBy();

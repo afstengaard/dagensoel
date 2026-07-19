@@ -1,11 +1,13 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/apiFacade";
+import ImageLightbox from "../components/ImageLightbox";
 
 export default function BeerHistory() {
   const [query, setQuery] = useState("");
   const [allBeers, setAllBeers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [lightboxImage, setLightboxImage] = useState(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -83,7 +85,15 @@ export default function BeerHistory() {
                     <img
                       src={beer.imageUrl}
                       alt={beer.beerName}
-                      style={{ width: 48, height: 48, objectFit: "cover" }}
+                      onClick={() =>
+                        setLightboxImage({ src: beer.imageUrl, alt: beer.beerName })
+                      }
+                      style={{
+                        width: 48,
+                        height: 48,
+                        objectFit: "cover",
+                        cursor: "zoom-in",
+                      }}
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
                       }}
@@ -126,6 +136,12 @@ export default function BeerHistory() {
           </tbody>
         </table>
       )}
+
+      <ImageLightbox
+        src={lightboxImage?.src}
+        alt={lightboxImage?.alt}
+        onClose={() => setLightboxImage(null)}
+      />
     </div>
   );
 }

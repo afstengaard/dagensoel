@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../api/apiFacade";
+import ImageLightbox from "../components/ImageLightbox";
 
 export default function EventResults() {
   const { eventId } = useParams();
   const [results, setResults] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [urlDraft, setUrlDraft] = useState("");
+  const [lightboxImage, setLightboxImage] = useState(null);
   const isAdmin = api.loggedIn();
 
   useEffect(() => {
@@ -63,7 +65,15 @@ export default function EventResults() {
                     <img
                       src={r.imageUrl}
                       alt={r.beerName}
-                      style={{ width: 60, height: 60, objectFit: "cover" }}
+                      onClick={() =>
+                        setLightboxImage({ src: r.imageUrl, alt: r.beerName })
+                      }
+                      style={{
+                        width: 60,
+                        height: 60,
+                        objectFit: "cover",
+                        cursor: "zoom-in",
+                      }}
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
                       }}
@@ -113,6 +123,12 @@ export default function EventResults() {
           </tbody>
         </table>
       )}
+
+      <ImageLightbox
+        src={lightboxImage?.src}
+        alt={lightboxImage?.alt}
+        onClose={() => setLightboxImage(null)}
+      />
     </main>
   );
 }

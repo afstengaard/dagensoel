@@ -170,7 +170,21 @@ public class EventController {
                                     totalPoints
                             );
                         })
-                        .toList();
+                        .collect(java.util.stream.Collectors.toCollection(java.util.ArrayList::new));
+
+        // Results already come back ordered by totalPoints DESC from the
+        // query - assign 1-based placements here, with tied beers sharing
+        // a placement (e.g. two 2nd-place beers, then the next is 4th).
+        int placement = 0;
+        int previousPoints = Integer.MIN_VALUE;
+        for (int i = 0; i < results.size(); i++) {
+            ResultDTO dto = results.get(i);
+            if (dto.totalPoints != previousPoints) {
+                placement = i + 1;
+                previousPoints = dto.totalPoints;
+            }
+            dto.placement = placement;
+        }
 
         ctx.json(results);
     }
@@ -201,7 +215,7 @@ public class EventController {
                         return null;
                     }
 
-                    return new ResultDTO(
+                    ResultDTO dto = new ResultDTO(
                             event.getId(),
                             event.getName(),
                             event.getStartDate(),
@@ -215,6 +229,8 @@ public class EventController {
                             beer.getEvening(),
                             totalPoints
                     );
+                    dto.placement = 1; // getHistory only ever returns the winner
+                    return dto;
                 })
                 .filter(Objects::nonNull)
                 .toList();

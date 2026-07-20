@@ -24,6 +24,15 @@ public class ResultDTO {
 
     public int totalPoints;
 
+    /**
+     * 1-based rank within the event, based on totalPoints (standard
+     * "1224" competition ranking - tied beers share a placement and the
+     * next distinct placement skips accordingly). Set after construction
+     * once all of an event's results are known, so it defaults to 0
+     * until then.
+     */
+    public int placement;
+
     public ResultDTO(
             Long eventId,
             String eventName,

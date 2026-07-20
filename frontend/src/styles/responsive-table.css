@@ -1,5 +1,10 @@
 /* Responsive table: normal table on desktop, stacked "cards" on mobile. */
 
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
 .results-table {
   width: 100%;
   border-collapse: collapse;

@@ -44,6 +44,7 @@ export default function EventResults() {
       {results.length === 0 ? (
         <p>No results available.</p>
       ) : (
+        <div className="table-scroll">
         <table className="results-table">
           <thead>
             <tr>
@@ -119,6 +120,7 @@ export default function EventResults() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
 
       <ImageLightbox

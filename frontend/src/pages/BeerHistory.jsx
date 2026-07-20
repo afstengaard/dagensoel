@@ -59,6 +59,7 @@ export default function BeerHistory() {
       {loading && <p>Loading beers...</p>}
 
       {!loading && (
+        <div className="table-scroll">
         <table className="results-table">
           <thead>
             <tr>
@@ -70,7 +71,6 @@ export default function BeerHistory() {
               <th>Untappd</th>
               <th>Submitted By</th>
               <th>Event</th>
-              <th>Year</th>
             </tr>
           </thead>
           <tbody>
@@ -107,14 +107,13 @@ export default function BeerHistory() {
                 <td data-label="Event">
                   <Link to={`/results/${beer.eventId}`}>{beer.eventName}</Link>
                 </td>
-                <td data-label="Year">{beer.eventDate?.[0]}</td>
               </tr>
             ))}
 
             {filteredBeers.length === 0 && (
               <tr>
                 <td
-                  colSpan="9"
+                  colSpan="8"
                   style={{
                     padding: "1rem",
                     textAlign: "center",
@@ -127,6 +126,7 @@ export default function BeerHistory() {
             )}
           </tbody>
         </table>
+        </div>
       )}
 
       <ImageLightbox

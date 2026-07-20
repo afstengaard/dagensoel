@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../api/apiFacade";
 import ImageLightbox from "../components/ImageLightbox";
+import "../styles/responsive-table.css";
 
 export default function EventResults() {
   const { eventId } = useParams();
@@ -43,7 +44,7 @@ export default function EventResults() {
       {results.length === 0 ? (
         <p>No results available.</p>
       ) : (
-        <table border="1" cellPadding="8">
+        <table className="results-table">
           <thead>
             <tr>
               <th>Image</th>
@@ -60,7 +61,7 @@ export default function EventResults() {
           <tbody>
             {results.map((r) => (
               <tr key={r.beerId}>
-                <td>
+                <td className="cell-image">
                   {r.imageUrl ? (
                     <img
                       src={r.imageUrl}
@@ -68,33 +69,29 @@ export default function EventResults() {
                       onClick={() =>
                         setLightboxImage({ src: r.imageUrl, alt: r.beerName })
                       }
-                      style={{
-                        width: 60,
-                        height: 60,
-                        objectFit: "cover",
-                        cursor: "zoom-in",
-                      }}
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
                       }}
                     />
                   ) : null}
                 </td>
-                <td>{r.beerName}</td>
-                <td>{r.brewery}</td>
-                <td>{r.abv ? `${r.abv}%` : ""}</td>
-                <td>{r.evening}</td>
-                <td>
+                <td className="cell-title" data-label="Beer">
+                  {r.beerName}
+                </td>
+                <td data-label="Brewery">{r.brewery}</td>
+                <td data-label="ABV">{r.abv ? `${r.abv}%` : ""}</td>
+                <td data-label="Evening">{r.evening}</td>
+                <td data-label="Untappd">
                   {r.untappdLink ? (
                     <a href={r.untappdLink} target="_blank" rel="noreferrer">
                       Untappd
                     </a>
                   ) : null}
                 </td>
-                <td>{r.submittedBy}</td>
-                <td>{r.totalPoints}</td>
+                <td data-label="Submitted By">{r.submittedBy}</td>
+                <td data-label="Points">{r.totalPoints}</td>
                 {isAdmin && (
-                  <td>
+                  <td data-label="Image URL">
                     {editingId === r.beerId ? (
                       <>
                         <input

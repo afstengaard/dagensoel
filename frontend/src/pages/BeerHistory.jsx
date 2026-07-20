@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/apiFacade";
 import ImageLightbox from "../components/ImageLightbox";
+import "../styles/responsive-table.css";
 
 export default function BeerHistory() {
   const [query, setQuery] = useState("");
@@ -58,29 +59,24 @@ export default function BeerHistory() {
       {loading && <p>Loading beers...</p>}
 
       {!loading && (
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-          }}
-        >
+        <table className="results-table">
           <thead>
-            <tr style={{ backgroundColor: "#f5f5f5" }}>
-              <th style={thStyle}>Image</th>
-              <th style={thStyle}>Beer</th>
-              <th style={thStyle}>Brewery</th>
-              <th style={thStyle}>ABV</th>
-              <th style={thStyle}>Evening</th>
-              <th style={thStyle}>Untappd</th>
-              <th style={thStyle}>Submitted By</th>
-              <th style={thStyle}>Event</th>
-              <th style={thStyle}>Year</th>
+            <tr>
+              <th>Image</th>
+              <th>Beer</th>
+              <th>Brewery</th>
+              <th>ABV</th>
+              <th>Evening</th>
+              <th>Untappd</th>
+              <th>Submitted By</th>
+              <th>Event</th>
+              <th>Year</th>
             </tr>
           </thead>
           <tbody>
             {filteredBeers.map((beer) => (
               <tr key={`${beer.beerId}-${beer.eventId}`}>
-                <td style={tdStyle}>
+                <td className="cell-image">
                   {beer.imageUrl ? (
                     <img
                       src={beer.imageUrl}
@@ -88,34 +84,30 @@ export default function BeerHistory() {
                       onClick={() =>
                         setLightboxImage({ src: beer.imageUrl, alt: beer.beerName })
                       }
-                      style={{
-                        width: 48,
-                        height: 48,
-                        objectFit: "cover",
-                        cursor: "zoom-in",
-                      }}
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
                       }}
                     />
                   ) : null}
                 </td>
-                <td style={tdStyle}>{beer.beerName}</td>
-                <td style={tdStyle}>{beer.brewery}</td>
-                <td style={tdStyle}>{beer.abv ? `${beer.abv}%` : ""}</td>
-                <td style={tdStyle}>{beer.evening}</td>
-                <td style={tdStyle}>
+                <td className="cell-title" data-label="Beer">
+                  {beer.beerName}
+                </td>
+                <td data-label="Brewery">{beer.brewery}</td>
+                <td data-label="ABV">{beer.abv ? `${beer.abv}%` : ""}</td>
+                <td data-label="Evening">{beer.evening}</td>
+                <td data-label="Untappd">
                   {beer.untappdLink ? (
                     <a href={beer.untappdLink} target="_blank" rel="noreferrer">
                       Untappd
                     </a>
                   ) : null}
                 </td>
-                <td style={tdStyle}>{beer.submittedBy}</td>
-                <td style={tdStyle}>
+                <td data-label="Submitted By">{beer.submittedBy}</td>
+                <td data-label="Event">
                   <Link to={`/results/${beer.eventId}`}>{beer.eventName}</Link>
                 </td>
-                <td style={tdStyle}>{beer.eventDate?.[0]}</td>
+                <td data-label="Year">{beer.eventDate?.[0]}</td>
               </tr>
             ))}
 
@@ -145,14 +137,3 @@ export default function BeerHistory() {
     </div>
   );
 }
-
-const thStyle = {
-  textAlign: "left",
-  padding: "0.75rem",
-  borderBottom: "2px solid #ddd",
-};
-
-const tdStyle = {
-  padding: "0.75rem",
-  borderBottom: "1px solid #eee",
-};

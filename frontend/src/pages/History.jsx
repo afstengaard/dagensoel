@@ -11,17 +11,17 @@ export default function History() {
 
   return (
     <main>
-      <h1>Previous Years</h1>
+      <h1>Tidligere år</h1>
 
       {history.length === 0 ? (
-        <p>No previous contests yet.</p>
+        <p>Ingen tidligere konkurrencer endnu.</p>
       ) : (
         <table border="1" cellPadding="8">
           <thead>
             <tr>
-              <th>Year</th>
-              <th>Winning Beer</th>
-              <th>Submitted By</th>
+              <th>År</th>
+              <th>Vinderøl</th>
+              <th>Indsendt af</th>
               <th></th>
             </tr>
           </thead>
@@ -33,7 +33,7 @@ export default function History() {
                 <td>{row.submittedBy}</td>
                 <td>
                   <Link to={`/results/${row.eventId}`}>
-                    <button>View results</button>
+                    <button>Se resultater</button>
                   </Link>
                 </td>
               </tr>

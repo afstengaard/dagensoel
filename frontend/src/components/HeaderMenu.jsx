@@ -18,20 +18,20 @@ export default function HeaderMenu() {
       <nav style={styles.nav}>
         <div style={styles.left}>
           <NavLink to="/" style={styles.link}>
-            Home
+            Hjem
           </NavLink>
 
           <NavLink to="/history" style={styles.link}>
-            History
+            Historik
           </NavLink>
 
           <NavLink to="/beers" style={styles.link}>
-            Beers
+            Øl
           </NavLink>
 
           {loggedIn ? (
             <NavLink to="/admin" style={styles.link}>
-              Admin dashboard
+              Admin-dashboard
             </NavLink>
           ) : (
             <NavLink to="/admin/login" style={styles.link}>
@@ -41,7 +41,7 @@ export default function HeaderMenu() {
 
           {loggedIn && (
             <button onClick={api.logout} style={styles.link}>
-              Logout
+              Log ud
             </button>
           )}
         </div>

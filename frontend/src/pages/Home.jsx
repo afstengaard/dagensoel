@@ -16,12 +16,12 @@ export default function Home() {
       <h1>Dagens Øl 🍺</h1>
 
       <input
-        placeholder="Event code"
+        placeholder="Eventkode"
         value={code}
         onChange={e => setCode(e.target.value)}
       />
 
-      <button onClick={joinEvent}>Join event</button>
+      <button onClick={joinEvent}>Deltag i event</button>
 
       <hr />
 

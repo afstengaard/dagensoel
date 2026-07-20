@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import api from "../api/apiFacade";
 
 export default function Countdown() {
-  const [text, setText] = useState("Loading…");
+  const [text, setText] = useState("Indlæser…");
 
   useEffect(() => {
     api.getActiveEvent()
       .then(event => {
         if (!event?.startDate) {
-          setText("No event planned");
+          setText("Ingen smagning planlagt");
           return;
         }
 
@@ -24,17 +24,17 @@ export default function Countdown() {
         const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
         if (diffDays > 1) {
-          setText(`${diffDays} days until next tasting`);
+          setText(`${diffDays} dage til næste smagning`);
         } else if (diffDays === 1) {
-          setText("1 day until next tasting");
+          setText("1 dag til næste smagning");
         } else if (diffDays === 0) {
-          setText("Today! 🍻");
+          setText("I dag! 🍻");
         } else {
-          setText("Event has started");
+          setText("Smagningen er startet");
         }
       })
       .catch(() => {
-        setText("No event planned");
+        setText("Ingen smagning planlagt");
       });
   }, []);
 

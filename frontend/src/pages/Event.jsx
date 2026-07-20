@@ -11,7 +11,7 @@ export default function Event() {
     api.getEventByCode(code).then(setEvent);
   }, [code]);
 
-  if (!event) return <p>Loading...</p>;
+  if (!event) return <p>Indlæser...</p>;
 
   const votingOpen = event.status === "VOTING";
 
@@ -19,21 +19,21 @@ export default function Event() {
     <main>
       <h1>{event.name}</h1>
 
-      {event.startDate && <p>Start date: {event.startDate}</p>}
+      {event.startDate && <p>Startdato: {event.startDate}</p>}
 
-      <h2>Beers tasted</h2>
+      <h2>Smagte øl</h2>
 
       {event.beers.length === 0 ? (
-        <p>No beers registered yet.</p>
+        <p>Ingen øl tilføjet endnu.</p>
       ) : (
         <table border="1" cellPadding="8">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Brewery</th>
-              <th>Country</th>
+              <th>Navn</th>
+              <th>Bryggeri</th>
+              <th>Land</th>
               <th>ABV %</th>
-              <th>Submitted by</th>
+              <th>Indsendt af</th>
             </tr>
           </thead>
           <tbody>
@@ -56,14 +56,14 @@ export default function Event() {
         disabled={!votingOpen}
         onClick={() => navigate(`/event/${code}/vote`)}
       >
-        Go to vote
+        Gå til afstemning
       </button>
 
-      {!votingOpen && <p>Voting is not open yet.</p>}
+      {!votingOpen && <p>Afstemningen er ikke åbnet endnu.</p>}
 
       {event.status === "CLOSED" && (
         <button onClick={() => navigate(`/results/${event.id}`)}>
-          View results
+          Se resultater
         </button>
       )}
     </main>

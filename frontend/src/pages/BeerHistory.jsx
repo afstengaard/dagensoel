@@ -42,11 +42,11 @@ export default function BeerHistory() {
 
   return (
     <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "1rem" }}>
-      <h1>Beer History</h1>
+      <h1>Ølhistorik</h1>
 
       <input
         type="text"
-        placeholder="Search beer, brewery, person or year..."
+        placeholder="Søg efter øl, bryggeri, person eller år..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         style={{
@@ -56,20 +56,20 @@ export default function BeerHistory() {
         }}
       />
 
-      {loading && <p>Loading beers...</p>}
+      {loading && <p>Indlæser øl...</p>}
 
       {!loading && (
         <div className="table-scroll">
         <table className="results-table">
           <thead>
             <tr>
-              <th>Image</th>
-              <th>Beer</th>
-              <th>Brewery</th>
+              <th>Billede</th>
+              <th>Øl</th>
+              <th>Bryggeri</th>
               <th>ABV</th>
-              <th>Evening</th>
+              <th>Aften</th>
               <th>Untappd</th>
-              <th>Submitted By</th>
+              <th>Indsendt af</th>
               <th>Event</th>
             </tr>
           </thead>
@@ -90,12 +90,12 @@ export default function BeerHistory() {
                     />
                   ) : null}
                 </td>
-                <td className="cell-title" data-label="Beer">
+                <td className="cell-title" data-label="Øl">
                   {beer.beerName}
                 </td>
-                <td data-label="Brewery">{beer.brewery}</td>
+                <td data-label="Bryggeri">{beer.brewery}</td>
                 <td data-label="ABV">{beer.abv ? `${beer.abv}%` : ""}</td>
-                <td data-label="Evening">{beer.evening}</td>
+                <td data-label="Aften">{beer.evening}</td>
                 <td data-label="Untappd">
                   {beer.untappdLink ? (
                     <a href={beer.untappdLink} target="_blank" rel="noreferrer">
@@ -103,7 +103,7 @@ export default function BeerHistory() {
                     </a>
                   ) : null}
                 </td>
-                <td data-label="Submitted By">{beer.submittedBy}</td>
+                <td data-label="Indsendt af">{beer.submittedBy}</td>
                 <td data-label="Event">
                   <Link to={`/results/${beer.eventId}`}>{beer.eventName}</Link>
                 </td>
@@ -120,7 +120,7 @@ export default function BeerHistory() {
                     opacity: 0.6,
                   }}
                 >
-                  No beers match your search
+                  Ingen øl matcher din søgning
                 </td>
               </tr>
             )}

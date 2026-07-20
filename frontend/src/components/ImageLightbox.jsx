@@ -35,7 +35,7 @@ export default function ImageLightbox({ src, alt, onClose }) {
     >
       <button
         onClick={onClose}
-        aria-label="Close"
+        aria-label="Luk"
         style={{
           position: "absolute",
           top: "1rem",

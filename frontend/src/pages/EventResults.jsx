@@ -31,31 +31,31 @@ export default function EventResults() {
       setEditingId(null);
       loadResults();
     } catch (err) {
-      alert(`Failed to save image URL: ${err.message}`);
+      alert(`Kunne ikke gemme billed-URL: ${err.message}`);
     }
   }
 
   return (
     <main>
-      <Link to="/history">← Back to history</Link>
+      <Link to="/history">← Tilbage til historik</Link>
 
-      <h1>Event Results</h1>
+      <h1>Eventresultater</h1>
 
       {results.length === 0 ? (
-        <p>No results available.</p>
+        <p>Ingen resultater tilgængelige.</p>
       ) : (
         <div className="table-scroll">
         <table className="results-table">
           <thead>
             <tr>
-              <th>Image</th>
-              <th>Beer</th>
-              <th>Brewery</th>
+              <th>Billede</th>
+              <th>Øl</th>
+              <th>Bryggeri</th>
               <th>ABV</th>
-              <th>Evening</th>
+              <th>Aften</th>
               <th>Untappd</th>
-              <th>Submitted By</th>
-              <th>Points</th>
+              <th>Indsendt af</th>
+              <th>Point</th>
               {isAdmin && <th></th>}
             </tr>
           </thead>
@@ -76,12 +76,12 @@ export default function EventResults() {
                     />
                   ) : null}
                 </td>
-                <td className="cell-title" data-label="Beer">
+                <td className="cell-title" data-label="Øl">
                   {r.beerName}
                 </td>
-                <td data-label="Brewery">{r.brewery}</td>
+                <td data-label="Bryggeri">{r.brewery}</td>
                 <td data-label="ABV">{r.abv ? `${r.abv}%` : ""}</td>
-                <td data-label="Evening">{r.evening}</td>
+                <td data-label="Aften">{r.evening}</td>
                 <td data-label="Untappd">
                   {r.untappdLink ? (
                     <a href={r.untappdLink} target="_blank" rel="noreferrer">
@@ -89,10 +89,10 @@ export default function EventResults() {
                     </a>
                   ) : null}
                 </td>
-                <td data-label="Submitted By">{r.submittedBy}</td>
-                <td data-label="Points">{r.totalPoints}</td>
+                <td data-label="Indsendt af">{r.submittedBy}</td>
+                <td data-label="Point">{r.totalPoints}</td>
                 {isAdmin && (
-                  <td data-label="Image URL">
+                  <td data-label="Billed-URL">
                     {editingId === r.beerId ? (
                       <>
                         <input
@@ -103,15 +103,15 @@ export default function EventResults() {
                           style={{ width: 200 }}
                         />
                         <button onClick={() => saveImageUrl(r.beerId)}>
-                          Save
+                          Gem
                         </button>
                         <button onClick={() => setEditingId(null)}>
-                          Cancel
+                          Annullér
                         </button>
                       </>
                     ) : (
                       <button onClick={() => startEditing(r)}>
-                        {r.imageUrl ? "Edit image" : "Add image"}
+                        {r.imageUrl ? "Rediger billede" : "Tilføj billede"}
                       </button>
                     )}
                   </td>

@@ -15,25 +15,25 @@ export default function Vote() {
   useEffect(() => {
     api.getEventByCode(code)
       .then(setEvent)
-      .catch(() => setMessage("Event not found"));
+      .catch(() => setMessage("Event ikke fundet"));
   }, [code]);
 
-  if (!event) return <p>Loading...</p>;
+  if (!event) return <p>Indlæser...</p>;
 
   if (event.status !== "VOTING") {
-    return <p>Voting is not open.</p>;
+    return <p>Afstemningen er ikke åben.</p>;
   }
 
   async function submitVotes() {
     setMessage(null);
 
     if (!favoriteBeerId || !secondBeerId) {
-      setMessage("Please select both a favorite and a second choice.");
+      setMessage("Vælg både en favorit og en andenplads.");
       return;
     }
 
     if (favoriteBeerId === secondBeerId) {
-      setMessage("Favorite and second choice must be different beers.");
+      setMessage("Favorit og andenplads skal være to forskellige øl.");
       return;
     }
 
@@ -44,25 +44,25 @@ export default function Vote() {
       });
 
       setSubmitted(true);
-      setMessage("Thanks for voting! 🍻");
+      setMessage("Tak for din stemme! 🍻");
     } catch (e) {
-      setMessage(e.message || "Failed to submit votes");
+      setMessage(e.message || "Kunne ikke indsende stemmer");
     }
   }
 
   return (
     <main>
-      <h1>Vote for {event.name}</h1>
+      <h1>Stem på {event.name}</h1>
 
       {message && <p>{message}</p>}
 
       <table border="1" cellPadding="8">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Brewery</th>
-            <th>Favorite (2 pts)</th>
-            <th>Second (1 pt)</th>
+            <th>Navn</th>
+            <th>Bryggeri</th>
+            <th>Favorit (2 point)</th>
+            <th>Andenplads (1 point)</th>
           </tr>
         </thead>
         <tbody>
@@ -84,7 +84,7 @@ export default function Vote() {
                   disabled={submitted}
                   onClick={() => setFavoriteBeerId(beer.id)}
                 >
-                  {favoriteBeerId === beer.id ? "Selected" : "Select"}
+                  {favoriteBeerId === beer.id ? "Valgt" : "Vælg"}
                 </button>
               </td>
               <td>
@@ -92,7 +92,7 @@ export default function Vote() {
                   disabled={submitted}
                   onClick={() => setSecondBeerId(beer.id)}
                 >
-                  {secondBeerId === beer.id ? "Selected" : "Select"}
+                  {secondBeerId === beer.id ? "Valgt" : "Vælg"}
                 </button>
               </td>
             </tr>
@@ -104,7 +104,7 @@ export default function Vote() {
 
       {!submitted && (
         <button onClick={submitVotes}>
-          Submit votes
+          Indsend stemmer
         </button>
       )}
     </main>

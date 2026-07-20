@@ -13,7 +13,7 @@ export default function AdminLogin() {
       await api.login(username, password);
       navigate("/admin");
     } catch {
-      setError("Login failed");
+      setError("Login mislykkedes");
     }
   }
 
@@ -21,11 +21,11 @@ export default function AdminLogin() {
     <main>
       <h1>Admin login</h1>
 
-      <input placeholder="Username" onChange={e => setUsername(e.target.value)} />
-      <input type="password" placeholder="Password"
+      <input placeholder="Brugernavn" onChange={e => setUsername(e.target.value)} />
+      <input type="password" placeholder="Adgangskode"
              onChange={e => setPassword(e.target.value)} />
 
-      <button onClick={submit}>Login</button>
+      <button onClick={submit}>Log ind</button>
 
       {error && <p>{error}</p>}
     </main>

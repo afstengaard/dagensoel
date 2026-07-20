@@ -13,16 +13,16 @@ export default function CreateEvent() {
       await api.createEvent({ name, startDate });
       navigate("/admin");
     } catch (e) {
-      setMessage("Failed to create event");
+      setMessage("Kunne ikke oprette event");
     }
   }
 
   return (
     <main>
-      <h1>Create Event</h1>
+      <h1>Opret event</h1>
 
       <input
-        placeholder="Event name"
+        placeholder="Eventnavn"
         value={name}
         onChange={e => setName(e.target.value)}
       />
@@ -33,7 +33,7 @@ export default function CreateEvent() {
         onChange={e => setStartDate(e.target.value)}
       />
 
-      <button onClick={createEvent}>Create event</button>
+      <button onClick={createEvent}>Opret event</button>
 
       {message && <p>{message}</p>}
     </main>

@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../api/apiFacade";
 
+const STATUS_LABELS = {
+  OPEN: "Åben",
+  VOTING: "Afstemning",
+  CLOSED: "Lukket",
+};
+
 export default function AdminDashboard() {
   const [event, setEvent] = useState(null);
   const [pastEvents, setPastEvents] = useState([]);
@@ -22,7 +28,7 @@ export default function AdminDashboard() {
         const active = await api.getActiveEvent();
         setEvent(active);
       } catch {
-        // No active event → this is OK
+        // Intet aktivt event → helt fint
         setEvent(null);
       } finally {
         setLoading(false);
@@ -49,7 +55,7 @@ export default function AdminDashboard() {
   }
 
   async function removeEvent(id, name) {
-    if (!confirm(`Delete "${name}" and all its beers/votes? This cannot be undone.`)) {
+    if (!confirm(`Slet "${name}" og alle dens øl/stemmer? Dette kan ikke fortrydes.`)) {
       return;
     }
 
@@ -57,7 +63,7 @@ export default function AdminDashboard() {
       await api.deleteEvent(id);
       await reloadPastEvents();
     } catch {
-      alert("Failed to delete event");
+      alert("Kunne ikke slette event");
     }
   }
 
@@ -67,7 +73,7 @@ export default function AdminDashboard() {
 
   async function runImport() {
     if (!importFile) {
-      alert("Choose a CSV file first");
+      alert("Vælg en CSV-fil først");
       return;
     }
 
@@ -76,14 +82,14 @@ export default function AdminDashboard() {
     try {
       const summary = await api.importHistoricalData(importFile);
       setImportStatus(
-        `Done: ${summary.eventsCreated} event(s) created, ` +
-          `${summary.eventsSkipped} skipped (already existed), ` +
-          `${summary.beersCreated} beer(s) created.`
+        `Færdig: ${summary.eventsCreated} event(s) oprettet, ` +
+          `${summary.eventsSkipped} sprunget over (fandtes allerede), ` +
+          `${summary.beersCreated} øl oprettet.`
       );
       setImportFile(null);
       await reloadPastEvents();
     } catch (err) {
-      setImportStatus(`Import failed: ${err.message}`);
+      setImportStatus(`Import mislykkedes: ${err.message}`);
     } finally {
       setImporting(false);
     }
@@ -103,7 +109,7 @@ export default function AdminDashboard() {
       const updated = await api.updateEventStatus(event.id, nextStatus);
       setEvent(updated);
     } catch {
-      alert("Failed to update event status");
+      alert("Kunne ikke opdatere event-status");
     }
   }
 
@@ -114,20 +120,20 @@ export default function AdminDashboard() {
     const submittedBy = beer.submittedBy.trim();
     const abv = Number(beer.abv);
 
-    // String validation
+    // Tekstvalidering
     if (!name || !brewery || !country || !submittedBy) {
-      alert("All text fields must be filled out");
+      alert("Alle tekstfelter skal udfyldes");
       return;
     }
 
-    // ABV validation
+    // ABV-validering
     if (isNaN(abv)) {
-      alert("ABV must be a number");
+      alert("ABV skal være et tal");
       return;
     }
 
     if (abv <= 0) {
-      alert("ABV must be greater than 0");
+      alert("ABV skal være større end 0");
       return;
     }
 
@@ -150,21 +156,21 @@ export default function AdminDashboard() {
 
       await reloadEvent();
     } catch {
-      alert("Failed to add beer");
+      alert("Kunne ikke tilføje øl");
     }
   }
 
-  if (loading) return <p>Loading…</p>;
+  if (loading) return <p>Indlæser…</p>;
 
   return (
     <main>
-      <h1>Admin Dashboard</h1>
+      <h1>Admin-dashboard</h1>
 
       {!event && (
         <>
-          <p>No active event</p>
+          <p>Intet aktivt event</p>
           <button onClick={() => navigate("/admin/events/create")}>
-            Create new event
+            Opret nyt event
           </button>
         </>
       )}
@@ -172,42 +178,42 @@ export default function AdminDashboard() {
       {event && (
         <>
           <h2>{event.name}</h2>
-          <p>Status: {event.status}</p>
+          <p>Status: {STATUS_LABELS[event.status] || event.status}</p>
 
           {event.status === "OPEN" && (
-            <button onClick={() => changeStatus("VOTING")}>Open voting</button>
+            <button onClick={() => changeStatus("VOTING")}>Åbn for afstemning</button>
           )}
 
           {event.status === "VOTING" && (
-            <button onClick={() => changeStatus("CLOSED")}>Close event</button>
+            <button onClick={() => changeStatus("CLOSED")}>Luk event</button>
           )}
 
           <p>
-            Code: <strong>{event.code}</strong>
+            Kode: <strong>{event.code}</strong>
           </p>
           <p>
-            Start date: {new Date(event.startDate).toLocaleDateString("da-DK")}
+            Startdato: {new Date(event.startDate).toLocaleDateString("da-DK")}
           </p>
 
           {event.status === "OPEN" && (
             <>
               <hr />
-              <h3>Add beer</h3>
+              <h3>Tilføj øl</h3>
 
               <input
-                placeholder="Name"
+                placeholder="Navn"
                 value={beer.name}
                 onChange={(e) => setBeer({ ...beer, name: e.target.value })}
               />
 
               <input
-                placeholder="Brewery"
+                placeholder="Bryggeri"
                 value={beer.brewery}
                 onChange={(e) => setBeer({ ...beer, brewery: e.target.value })}
               />
 
               <input
-                placeholder="Country"
+                placeholder="Land"
                 value={beer.country}
                 onChange={(e) => setBeer({ ...beer, country: e.target.value })}
               />
@@ -221,29 +227,29 @@ export default function AdminDashboard() {
               />
 
               <input
-                placeholder="Submitted by"
+                placeholder="Indsendt af"
                 value={beer.submittedBy}
                 onChange={(e) =>
                   setBeer({ ...beer, submittedBy: e.target.value })
                 }
               />
 
-              <button onClick={addBeer}>Add beer</button>
+              <button onClick={addBeer}>Tilføj øl</button>
             </>
           )}
-          <h3>Registered beers</h3>
+          <h3>Registrerede øl</h3>
 
           {event.beers.length === 0 ? (
-            <p>No beers added yet.</p>
+            <p>Ingen øl tilføjet endnu.</p>
           ) : (
             <table border="1" cellPadding="8">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Brewery</th>
-                  <th>Country</th>
+                  <th>Navn</th>
+                  <th>Bryggeri</th>
+                  <th>Land</th>
                   <th>ABV</th>
-                  <th>Submitted by</th>
+                  <th>Indsendt af</th>
                 </tr>
               </thead>
               <tbody>
@@ -263,11 +269,11 @@ export default function AdminDashboard() {
       )}
 
       <hr />
-      <h3>Import historical data</h3>
+      <h3>Importér historiske data</h3>
       <p>
-        Upload the old "Oversigt" CSV export to bulk-create closed events
-        with imported results. Safe to run more than once — events that
-        already exist (by name) are skipped.
+        Upload den gamle "Oversigt"-CSV-eksport for at masseoprette lukkede
+        events med importerede resultater. Sikkert at køre flere gange —
+        events der allerede findes (efter navn) springes over.
       </p>
       <input
         type="file"
@@ -275,22 +281,22 @@ export default function AdminDashboard() {
         onChange={(e) => setImportFile(e.target.files[0] || null)}
       />
       <button onClick={runImport} disabled={importing}>
-        {importing ? "Importing…" : "Import CSV"}
+        {importing ? "Importerer…" : "Importér CSV"}
       </button>
       {importStatus && <p>{importStatus}</p>}
 
       <hr />
-      <h3>Previous events</h3>
+      <h3>Tidligere events</h3>
 
       {pastEvents.length === 0 ? (
-        <p>No previous events.</p>
+        <p>Ingen tidligere events.</p>
       ) : (
         <table border="1" cellPadding="8">
           <thead>
             <tr>
               <th>Event</th>
-              <th>Date</th>
-              <th>Winning beer</th>
+              <th>Dato</th>
+              <th>Vinderøl</th>
               <th></th>
             </tr>
           </thead>
@@ -302,7 +308,7 @@ export default function AdminDashboard() {
                 <td>{row.beerName}</td>
                 <td>
                   <button onClick={() => removeEvent(row.eventId, row.eventName)}>
-                    Delete
+                    Slet
                   </button>
                 </td>
               </tr>

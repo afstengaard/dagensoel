@@ -2,6 +2,7 @@ package dk.dagensoel.controllers;
 
 import dk.dagensoel.daos.BeerDAO;
 import dk.dagensoel.daos.EventDAO;
+import dk.dagensoel.daos.VoteDAO;
 import dk.dagensoel.dtos.BeerDTO;
 import dk.dagensoel.dtos.BeerSearchDTO;
 import dk.dagensoel.entities.Beer;
@@ -19,6 +20,7 @@ public class BeerController {
 
     private final BeerDAO beerDAO = new BeerDAO();
     private final EventDAO eventDAO = new EventDAO();
+    private final VoteDAO voteDAO = new VoteDAO();
 
     // READ
 
@@ -50,12 +52,42 @@ public class BeerController {
     }
 
     public void getHistory(Context ctx) {
-        List<BeerSearchDTO> beers = beerDAO.findAllWithEvent()
-                .stream()
-                .map(BeerSearchDTO::new)
+        List<Beer> beers = beerDAO.findAllWithEvent();
+
+        // Group by event so each event's ranking is only computed once,
+        // not once per beer.
+        Map<Long, List<Beer>> beersByEvent = beers.stream()
+                .collect(java.util.stream.Collectors.groupingBy(b -> b.getEvent().getId()));
+
+        Map<Long, Integer> placementByBeerId = new java.util.HashMap<>();
+
+        for (Long eventId : beersByEvent.keySet()) {
+            List<Object[]> results = voteDAO.getResultsForEvent(eventId);
+            // Already ordered by totalPoints DESC - same standard
+            // competition ranking as the per-event results page.
+            int placement = 0;
+            int previousPoints = Integer.MIN_VALUE;
+            for (int i = 0; i < results.size(); i++) {
+                Object[] row = results.get(i);
+                Long beerId = ((Number) row[0]).longValue();
+                int totalPoints = ((Number) row[2]).intValue();
+                if (totalPoints != previousPoints) {
+                    placement = i + 1;
+                    previousPoints = totalPoints;
+                }
+                placementByBeerId.put(beerId, placement);
+            }
+        }
+
+        List<BeerSearchDTO> dtos = beers.stream()
+                .map(beer -> {
+                    BeerSearchDTO dto = new BeerSearchDTO(beer);
+                    dto.placement = placementByBeerId.getOrDefault(beer.getId(), 0);
+                    return dto;
+                })
                 .toList();
 
-        ctx.json(beers);
+        ctx.json(dtos);
     }
 
 

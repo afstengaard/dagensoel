@@ -63,6 +63,7 @@ export default function BeerHistory() {
         <table className="results-table">
           <thead>
             <tr>
+              <th>Placering</th>
               <th>Billede</th>
               <th>Øl</th>
               <th>Bryggeri</th>
@@ -76,6 +77,7 @@ export default function BeerHistory() {
           <tbody>
             {filteredBeers.map((beer) => (
               <tr key={`${beer.beerId}-${beer.eventId}`}>
+                <td data-label="Placering">{beer.placement}.</td>
                 <td className="cell-image">
                   {beer.imageUrl ? (
                     <img
@@ -113,7 +115,7 @@ export default function BeerHistory() {
             {filteredBeers.length === 0 && (
               <tr>
                 <td
-                  colSpan="8"
+                  colSpan="9"
                   style={{
                     padding: "1rem",
                     textAlign: "center",

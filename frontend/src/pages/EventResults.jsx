@@ -48,7 +48,6 @@ export default function EventResults() {
         <table className="results-table">
           <thead>
             <tr>
-              <th>Placering</th>
               <th>Billede</th>
               <th>Øl</th>
               <th>Bryggeri</th>
@@ -63,10 +62,6 @@ export default function EventResults() {
           <tbody>
             {results.map((r) => (
               <tr key={r.beerId}>
-                <td data-label="Placering">
-                  {r.placement}.{" "}
-                  {r.placement === 1 ? "🥇" : r.placement === 2 ? "🥈" : r.placement === 3 ? "🥉" : ""}
-                </td>
                 <td className="cell-image">
                   {r.imageUrl ? (
                     <img

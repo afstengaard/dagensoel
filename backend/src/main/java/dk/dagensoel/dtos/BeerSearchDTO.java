@@ -27,6 +27,7 @@ public class BeerSearchDTO {
     public String imageUrl;
     public String untappdLink;
     public String evening;
+    public int placement;
 
     public Long eventId;
     public String eventName;

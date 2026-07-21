@@ -213,6 +213,7 @@ public class EventController {
                                     beer.getImageUrl(),
                                     beer.getUntappdLink(),
                                     beer.getEvening(),
+                                    beer.getStyle(),
                                     totalPoints
                             );
                         })
@@ -273,6 +274,7 @@ public class EventController {
                             beer.getImageUrl(),
                             beer.getUntappdLink(),
                             beer.getEvening(),
+                            beer.getStyle(),
                             totalPoints
                     );
                     dto.placement = 1; // getHistory only ever returns the winner

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../api/apiFacade";
+import { BEER_STYLE_CATEGORIES } from "../data/beerStyles";
 import "../styles/responsive-table.css";
 
 const emptyNewBeer = {
@@ -12,6 +13,7 @@ const emptyNewBeer = {
   evening: "",
   untappdLink: "",
   imageUrl: "",
+  style: "",
   totalPoints: "",
 };
 
@@ -92,6 +94,7 @@ export default function EditEvent() {
         evening: beer.evening || null,
         untappdLink: beer.untappdLink?.trim() || null,
         imageUrl: beer.imageUrl?.trim() || null,
+        style: beer.style || null,
         totalPoints,
       });
 
@@ -141,6 +144,7 @@ export default function EditEvent() {
         evening: newBeer.evening || null,
         untappdLink: newBeer.untappdLink.trim() || null,
         imageUrl: newBeer.imageUrl.trim() || null,
+        style: newBeer.style || null,
       });
 
       // The create endpoint doesn't take points directly (new beers start
@@ -155,6 +159,7 @@ export default function EditEvent() {
           evening: created.evening,
           untappdLink: created.untappdLink,
           imageUrl: created.imageUrl,
+          style: created.style,
           totalPoints,
         });
       }
@@ -201,6 +206,7 @@ export default function EditEvent() {
               <th>ABV</th>
               <th>Indsendt af</th>
               <th>Aften</th>
+              <th>Stil</th>
               <th>Untappd</th>
               <th>Billed-URL</th>
               <th>Point</th>
@@ -251,6 +257,23 @@ export default function EditEvent() {
                     <option value="">–</option>
                     <option value="Første aften">Første aften</option>
                     <option value="Anden aften">Anden aften</option>
+                  </select>
+                </td>
+                <td data-label="Stil">
+                  <select
+                    value={beer.style || ""}
+                    onChange={(e) => updateBeerField(index, "style", e.target.value)}
+                  >
+                    <option value="">Vælg ølstil...</option>
+                    {BEER_STYLE_CATEGORIES.map((category) => (
+                      <optgroup key={category.number} label={`${category.number}. ${category.name}`}>
+                        {category.styles.map((style) => (
+                          <option key={style.code} value={style.code}>
+                            {style.code} – {style.name}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
                   </select>
                 </td>
                 <td data-label="Untappd">
@@ -330,6 +353,23 @@ export default function EditEvent() {
                   <option value="">–</option>
                   <option value="Første aften">Første aften</option>
                   <option value="Anden aften">Anden aften</option>
+                </select>
+              </td>
+              <td data-label="Stil">
+                <select
+                  value={newBeer.style}
+                  onChange={(e) => setNewBeer({ ...newBeer, style: e.target.value })}
+                >
+                  <option value="">Vælg ølstil...</option>
+                  {BEER_STYLE_CATEGORIES.map((category) => (
+                    <optgroup key={category.number} label={`${category.number}. ${category.name}`}>
+                      {category.styles.map((style) => (
+                        <option key={style.code} value={style.code}>
+                          {style.code} – {style.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
                 </select>
               </td>
               <td data-label="Untappd">

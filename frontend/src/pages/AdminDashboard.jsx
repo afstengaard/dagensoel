@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../api/apiFacade";
+import { BEER_STYLE_CATEGORIES } from "../data/beerStyles";
 
 const STATUS_LABELS = {
   OPEN: "Åben",
@@ -23,6 +24,7 @@ export default function AdminDashboard() {
     evening: "",
     untappdLink: "",
     imageUrl: "",
+    style: "",
   });
 
   useEffect(() => {
@@ -156,6 +158,7 @@ export default function AdminDashboard() {
         evening: beer.evening || null,
         untappdLink: beer.untappdLink.trim() || null,
         imageUrl: imageUrl || null,
+        style: beer.style || null,
       });
 
       setBeer({
@@ -167,6 +170,7 @@ export default function AdminDashboard() {
         evening: "",
         untappdLink: "",
         imageUrl: "",
+        style: "",
       });
 
       await reloadEvent();
@@ -273,6 +277,22 @@ export default function AdminDashboard() {
                   setBeer({ ...beer, imageUrl: e.target.value })
                 }
               />
+
+              <select
+                value={beer.style}
+                onChange={(e) => setBeer({ ...beer, style: e.target.value })}
+              >
+                <option value="">Vælg ølstil...</option>
+                {BEER_STYLE_CATEGORIES.map((category) => (
+                  <optgroup key={category.number} label={`${category.number}. ${category.name}`}>
+                    {category.styles.map((style) => (
+                      <option key={style.code} value={style.code}>
+                        {style.code} – {style.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
 
               <button onClick={addBeer}>Tilføj øl</button>
             </>

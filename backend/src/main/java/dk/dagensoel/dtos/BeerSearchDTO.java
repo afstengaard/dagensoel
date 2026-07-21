@@ -27,6 +27,7 @@ public class BeerSearchDTO {
     public String imageUrl;
     public String untappdLink;
     public String evening;
+    public String style;
     public int placement;
     public int totalPoints;
 
@@ -43,6 +44,7 @@ public class BeerSearchDTO {
         this.imageUrl = beer.getImageUrl();
         this.untappdLink = beer.getUntappdLink();
         this.evening = beer.getEvening();
+        this.style = beer.getStyle();
         this.eventId = beer.getEvent().getId();
         this.eventName = beer.getEvent().getName();
         this.submittedBy = beer.getSubmittedBy();

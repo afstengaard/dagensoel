@@ -2,10 +2,12 @@ import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/apiFacade";
 import ImageLightbox from "../components/ImageLightbox";
+import { BEER_STYLE_CATEGORIES, styleLabel } from "../data/beerStyles";
 import "../styles/responsive-table.css";
 
 export default function BeerHistory() {
   const [query, setQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
   const [allBeers, setAllBeers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lightboxImage, setLightboxImage] = useState(null);
@@ -31,30 +33,51 @@ export default function BeerHistory() {
     return allBeers.filter((beer) => {
       const year = beer.eventDate?.[0]?.toString() || "";
 
-      return (
+      const matchesSearch =
         beer.beerName.toLowerCase().includes(search) ||
         beer.brewery?.toLowerCase().includes(search) ||
         beer.submittedBy?.toLowerCase().includes(search) ||
-        year.includes(search)
-      );
+        year.includes(search);
+
+      // A style code like "5A" belongs to category "5" - match on the
+      // leading digits so "5" matches "5A", "5B", "5G" etc, but not "12A".
+      const beerCategoryNumber = beer.style?.match(/^\d+/)?.[0];
+      const categoryMatches = !categoryFilter || beerCategoryNumber === categoryFilter;
+
+      return matchesSearch && categoryMatches;
     });
-  }, [query, allBeers]);
+  }, [query, categoryFilter, allBeers]);
 
   return (
     <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "1rem" }}>
       <h1>Ølhistorik</h1>
 
-      <input
-        type="text"
-        placeholder="Søg efter øl, bryggeri, person eller år..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "0.75rem",
-          marginBottom: "1rem",
-        }}
-      />
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem", flexWrap: "wrap" }}>
+        <input
+          type="text"
+          placeholder="Søg efter øl, bryggeri, person eller år..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{
+            flex: 1,
+            minWidth: "200px",
+            padding: "0.75rem",
+          }}
+        />
+
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          style={{ padding: "0.75rem" }}
+        >
+          <option value="">Alle ølstile</option>
+          {BEER_STYLE_CATEGORIES.map((category) => (
+            <option key={category.number} value={String(category.number)}>
+              {category.number}. {category.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {loading && <p>Indlæser øl...</p>}
 
@@ -68,6 +91,7 @@ export default function BeerHistory() {
               <th>Øl</th>
               <th>Bryggeri</th>
               <th>ABV</th>
+              <th>Stil</th>
               <th>Aften</th>
               <th>Untappd</th>
               <th>Indsendt af</th>
@@ -99,6 +123,7 @@ export default function BeerHistory() {
                 </td>
                 <td data-label="Bryggeri">{beer.brewery}</td>
                 <td data-label="ABV">{beer.abv ? `${beer.abv}%` : ""}</td>
+                <td data-label="Stil">{styleLabel(beer.style)}</td>
                 <td data-label="Aften">{beer.evening}</td>
                 <td data-label="Untappd">
                   {beer.untappdLink ? (
@@ -117,7 +142,7 @@ export default function BeerHistory() {
             {filteredBeers.length === 0 && (
               <tr>
                 <td
-                  colSpan="9"
+                  colSpan="10"
                   style={{
                     padding: "1rem",
                     textAlign: "center",

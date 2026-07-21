@@ -114,6 +114,7 @@ public class BeerController {
         beer.setSubmittedBy(dto.submittedBy);
         beer.setUntappdLink(dto.untappdLink);
         beer.setEvening(dto.evening);
+        beer.setStyle(dto.style);
         beer.setEvent(event);
 
         if (dto.imageUrl != null) {
@@ -160,6 +161,7 @@ public class BeerController {
         beer.setSubmittedBy(dto.submittedBy);
         beer.setUntappdLink(dto.untappdLink);
         beer.setEvening(dto.evening);
+        beer.setStyle(dto.style);
         beer.setImageUrl(imageUrl.isEmpty() ? null : imageUrl);
 
         int liveVoteSum = voteDAO.getVoteSumForBeer(beerId);

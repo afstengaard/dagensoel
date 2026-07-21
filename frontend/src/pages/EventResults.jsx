@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../api/apiFacade";
 import ImageLightbox from "../components/ImageLightbox";
+import { styleLabel } from "../data/beerStyles";
 import "../styles/responsive-table.css";
 
 export default function EventResults() {
@@ -52,6 +53,7 @@ export default function EventResults() {
               <th>Øl</th>
               <th>Bryggeri</th>
               <th>ABV</th>
+              <th>Stil</th>
               <th>Aften</th>
               <th>Untappd</th>
               <th>Indsendt af</th>
@@ -81,6 +83,7 @@ export default function EventResults() {
                 </td>
                 <td data-label="Bryggeri">{r.brewery}</td>
                 <td data-label="ABV">{r.abv ? `${r.abv}%` : ""}</td>
+                <td data-label="Stil">{styleLabel(r.style)}</td>
                 <td data-label="Aften">{r.evening}</td>
                 <td data-label="Untappd">
                   {r.untappdLink ? (

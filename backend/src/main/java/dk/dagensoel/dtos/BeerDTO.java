@@ -24,6 +24,7 @@ public class BeerDTO {
     public String imageUrl;
     public String untappdLink;
     public String evening;
+    public String style;
 
     /**
      * Combined point total (live votes + any imported points) for this
@@ -43,6 +44,7 @@ public class BeerDTO {
         this.imageUrl = beer.getImageUrl();
         this.untappdLink = beer.getUntappdLink();
         this.evening = beer.getEvening();
+        this.style = beer.getStyle();
     }
 }
 

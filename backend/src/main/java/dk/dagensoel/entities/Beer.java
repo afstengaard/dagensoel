@@ -54,6 +54,14 @@ public class Beer {
      */
     private String evening;
 
+    /**
+     * Style code from the club's beer style guide (e.g. "5A" for
+     * "Engelsk brown ale"). See frontend/src/data/beerStyles.js for the
+     * full guide - kept as a plain code here so relabeling styles later
+     * doesn't require a migration.
+     */
+    private String style;
+
     @ManyToOne(optional = false)
     private Event event;
 }

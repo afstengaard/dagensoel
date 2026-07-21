@@ -21,6 +21,7 @@ public class ResultDTO {
     public String imageUrl;
     public String untappdLink;
     public String evening;
+    public String style;
 
     public int totalPoints;
 
@@ -45,6 +46,7 @@ public class ResultDTO {
             String imageUrl,
             String untappdLink,
             String evening,
+            String style,
             int totalPoints
     ) {
         this.eventId = eventId;
@@ -58,6 +60,7 @@ public class ResultDTO {
         this.imageUrl = imageUrl;
         this.untappdLink = untappdLink;
         this.evening = evening;
+        this.style = style;
         this.totalPoints = totalPoints;
     }
 }

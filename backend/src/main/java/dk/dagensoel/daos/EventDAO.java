@@ -81,6 +81,19 @@ public class EventDAO extends BaseDAO<Event> {
         }
     }
 
+    public Event findByIdWithBeers(Long id) {
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery(
+                            "SELECT e FROM Event e LEFT JOIN FETCH e.beers WHERE e.id = :id",
+                            Event.class
+                    )
+                    .setParameter("id", id)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+        }
+    }
+
     public String generateUniqueCode() {
         return UUID.randomUUID()
                 .toString()

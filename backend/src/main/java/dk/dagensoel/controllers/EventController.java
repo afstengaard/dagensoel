@@ -114,7 +114,7 @@ public class EventController {
     public void getForEdit(Context ctx) {
         Long eventId = Long.parseLong(ctx.pathParam("id"));
 
-        Event event = eventDAO.findById(eventId);
+        Event event = eventDAO.findByIdWithBeers(eventId);
         if (event == null) {
             ctx.status(404).result("Event not found");
             return;

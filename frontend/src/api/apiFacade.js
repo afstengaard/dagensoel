@@ -114,6 +114,11 @@ const updateEventStatus = (id, status) =>
 const deleteEvent = (id) =>
   fetchNoContent(`/api/admin/events/${id}`, makeOptions("DELETE", true));
 
+const getEventForEdit = (id) => fetchWithAuth(`/api/admin/events/${id}`, "GET");
+
+const updateEvent = (id, event) =>
+  fetchWithAuth(`/api/admin/events/${id}`, "PUT", event);
+
 const importHistoricalData = (file) => {
   const formData = new FormData();
   formData.append("file", file);
@@ -146,6 +151,12 @@ const addBeerToEvent = (eventId, beer) =>
 const setBeerImageUrl = (beerId, imageUrl) =>
   fetchWithAuth(`/api/admin/beers/${beerId}/image`, "POST", { imageUrl });
 
+const updateBeer = (beerId, beer) =>
+  fetchWithAuth(`/api/admin/beers/${beerId}`, "PUT", beer);
+
+const deleteBeer = (beerId) =>
+  fetchNoContent(`/api/admin/beers/${beerId}`, makeOptions("DELETE", true));
+
 const searchBeers = (query) =>
   fetchJson(
     `/api/beers/search?q=${encodeURIComponent(query)}`,
@@ -173,11 +184,15 @@ const apiFacade = {
   createEvent,
   updateEventStatus,
   deleteEvent,
+  getEventForEdit,
+  updateEvent,
   importHistoricalData,
   getEventResults,
   submitVotes,
   addBeerToEvent,
   setBeerImageUrl,
+  updateBeer,
+  deleteBeer,
   getBeerHistory,
   searchBeers,
   getEventHistory,

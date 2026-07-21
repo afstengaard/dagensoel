@@ -26,5 +26,7 @@ public class EventRoutes {
         app.post("/api/admin/events/{id}/status", controller::updateStatus);
         app.post("/api/admin/events", controller::create);
         app.delete("/api/admin/events/{id}", controller::delete);
+        app.get("/api/admin/events/{id}", controller::getForEdit);
+        app.put("/api/admin/events/{id}", controller::update);
     }
 }

@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreateEvent from "./pages/CreateEvent";
+import EditEvent from "./pages/EditEvent";
 import HeaderMenu from "./components/HeaderMenu";
 import BeerHistory from "./pages/BeerHistory";
 
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/events/create" element={<CreateEvent />} />
+        <Route path="/admin/events/:eventId/edit" element={<EditEvent />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

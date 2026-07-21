@@ -22,5 +22,7 @@ public class BeerRoutes {
         // Admin
         app.post("/api/admin/events/{eventId}/beers", controller::create);
         app.post("/api/admin/beers/{id}/image", controller::setImageUrl);
+        app.put("/api/admin/beers/{id}", controller::update);
+        app.delete("/api/admin/beers/{id}", controller::delete);
     }
 }

@@ -130,6 +130,63 @@ public class BeerController {
     }
 
     /**
+     * Full edit of a beer's fields, used by the admin event-edit page.
+     * The incoming totalPoints is treated as the desired final total:
+     * since live votes are anonymous and can't be edited directly, the
+     * difference between that and the actual vote sum is stored in
+     * importedPoints so the displayed total ends up exactly right.
+     */
+    public void update(Context ctx) {
+        long beerId = Long.parseLong(ctx.pathParam("id"));
+
+        Beer beer = beerDAO.findById(beerId);
+        if (beer == null) {
+            ctx.status(404).result("Beer not found");
+            return;
+        }
+
+        BeerDTO dto = ctx.bodyAsClass(BeerDTO.class);
+
+        String imageUrl = dto.imageUrl == null ? "" : dto.imageUrl.trim();
+        if (!imageUrl.isEmpty() && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+            ctx.status(400).result("imageUrl must be a full http(s) URL");
+            return;
+        }
+
+        beer.setName(dto.name);
+        beer.setBrewery(dto.brewery);
+        beer.setCountry(dto.country);
+        beer.setAbv(dto.abv);
+        beer.setSubmittedBy(dto.submittedBy);
+        beer.setUntappdLink(dto.untappdLink);
+        beer.setEvening(dto.evening);
+        beer.setImageUrl(imageUrl.isEmpty() ? null : imageUrl);
+
+        int liveVoteSum = voteDAO.getVoteSumForBeer(beerId);
+        beer.setImportedPoints(dto.totalPoints - liveVoteSum);
+
+        Beer updated = beerDAO.update(beer);
+
+        BeerDTO response = new BeerDTO(updated);
+        response.totalPoints = liveVoteSum
+                + (updated.getImportedPoints() == null ? 0 : updated.getImportedPoints());
+        ctx.json(response);
+    }
+
+    public void delete(Context ctx) {
+        long beerId = Long.parseLong(ctx.pathParam("id"));
+
+        Beer beer = beerDAO.findById(beerId);
+        if (beer == null) {
+            ctx.status(404).result("Beer not found");
+            return;
+        }
+
+        beerDAO.deleteBeer(beerId);
+        ctx.status(204);
+    }
+
+    /**
      * Sets (or clears, if blank) the image URL for a beer. We store a
      * direct link to an externally-hosted image rather than accepting a
      * file upload, since the app server's own disk isn't persistent on

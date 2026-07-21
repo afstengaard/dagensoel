@@ -49,4 +49,22 @@ public class BeerDAO extends BaseDAO<Beer> {
         }
     }
 
+    /**
+     * Deletes a single beer and any votes tied to it (no cascade is
+     * wired from Beer to Vote, so they're removed explicitly first to
+     * avoid a foreign key violation).
+     */
+    public void deleteBeer(Long id) {
+        runInTransaction(em -> {
+            em.createQuery("DELETE FROM Vote v WHERE v.beer.id = :id")
+                    .setParameter("id", id)
+                    .executeUpdate();
+
+            Beer beer = em.find(Beer.class, id);
+            if (beer != null) {
+                em.remove(beer);
+            }
+        });
+    }
+
 }

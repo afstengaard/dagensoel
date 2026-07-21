@@ -347,6 +347,9 @@ export default function AdminDashboard() {
                 <td>{new Date(row.eventDate).toLocaleDateString("da-DK")}</td>
                 <td>{row.beerName}</td>
                 <td>
+                  <button onClick={() => navigate(`/admin/events/${row.eventId}/edit`)}>
+                    Rediger
+                  </button>
                   <button onClick={() => removeEvent(row.eventId, row.eventName)}>
                     Slet
                   </button>

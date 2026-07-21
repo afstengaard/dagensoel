@@ -25,6 +25,14 @@ public class BeerDTO {
     public String untappdLink;
     public String evening;
 
+    /**
+     * Combined point total (live votes + any imported points) for this
+     * beer. Only populated by endpoints that compute it (the edit-event
+     * fetch); zero otherwise. When sent back on an update, it's treated
+     * as the desired final total - see BeerController.update().
+     */
+    public int totalPoints;
+
     public BeerDTO(Beer beer) {
         this.id = beer.getId();
         this.name = beer.getName();

@@ -106,6 +106,52 @@ public class EventController {
         ctx.json(new EventDTO(event, false));
     }
 
+    /**
+     * Full event + beers for the admin edit page, with each beer's
+     * combined point total (live votes + importedPoints) attached -
+     * unlike the plain getByCode/getActive fetch, which doesn't need it.
+     */
+    public void getForEdit(Context ctx) {
+        Long eventId = Long.parseLong(ctx.pathParam("id"));
+
+        Event event = eventDAO.findById(eventId);
+        if (event == null) {
+            ctx.status(404).result("Event not found");
+            return;
+        }
+
+        java.util.Map<Long, Integer> pointsByBeerId = new java.util.HashMap<>();
+        for (Object[] row : voteDAO.getResultsForEvent(eventId)) {
+            Long beerId = ((Number) row[0]).longValue();
+            int totalPoints = ((Number) row[2]).intValue();
+            pointsByBeerId.put(beerId, totalPoints);
+        }
+
+        dk.dagensoel.dtos.EventDTO dto = new dk.dagensoel.dtos.EventDTO(event, true);
+        for (dk.dagensoel.dtos.BeerDTO beerDto : dto.beers) {
+            beerDto.totalPoints = pointsByBeerId.getOrDefault(beerDto.id, 0);
+        }
+
+        ctx.json(dto);
+    }
+
+    public void update(Context ctx) {
+        Long id = Long.parseLong(ctx.pathParam("id"));
+
+        Event event = eventDAO.findById(id);
+        if (event == null) {
+            ctx.status(404).result("Event not found");
+            return;
+        }
+
+        EventDTO dto = ctx.bodyAsClass(EventDTO.class);
+        event.setName(dto.name);
+        event.setStartDate(dto.startDate);
+
+        Event updated = eventDAO.update(event);
+        ctx.json(new EventDTO(updated, false));
+    }
+
     // HELPERS
 
     private boolean isValidTransition(EventStatus current, EventStatus next) {

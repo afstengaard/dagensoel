@@ -63,6 +63,24 @@ public class VoteDAO extends BaseDAO<Vote> {
     }
 
 
+    /**
+     * Sum of real (anonymous) vote points for a single beer, not
+     * including any importedPoints. Used by the admin edit page so
+     * editing the displayed total can be translated into the right
+     * importedPoints adjustment.
+     */
+    public int getVoteSumForBeer(Long beerId) {
+        try (EntityManager em = emf.createEntityManager()) {
+            Number sum = em.createQuery(
+                            "SELECT COALESCE(SUM(v.points), 0) FROM Vote v WHERE v.beer.id = :beerId",
+                            Number.class
+                    )
+                    .setParameter("beerId", beerId)
+                    .getSingleResult();
+            return sum.intValue();
+        }
+    }
+
     public void createVotePair(
             Event event,
             Beer favorite,

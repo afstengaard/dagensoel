@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../api/apiFacade";
+import ImageLightbox from "../components/ImageLightbox";
+import "../styles/responsive-table.css";
 
 export default function Vote() {
   const { code } = useParams();
@@ -11,6 +13,7 @@ export default function Vote() {
   const [favoriteBeerId, setFavoriteBeerId] = useState(null);
   const [secondBeerId, setSecondBeerId] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState(null);
 
   useEffect(() => {
     api.getEventByCode(code)
@@ -56,9 +59,11 @@ export default function Vote() {
 
       {message && <p>{message}</p>}
 
-      <table border="1" cellPadding="8">
+      <div className="table-scroll">
+      <table className="results-table">
         <thead>
           <tr>
+            <th>Billede</th>
             <th>Navn</th>
             <th>Bryggeri</th>
             <th>Favorit (2 point)</th>
@@ -77,9 +82,23 @@ export default function Vote() {
                   : ""
               }
             >
-              <td>{beer.name}</td>
-              <td>{beer.brewery}</td>
-              <td>
+              <td className="cell-image">
+                {beer.imageUrl ? (
+                  <img
+                    src={beer.imageUrl}
+                    alt={beer.name}
+                    onClick={() =>
+                      setLightboxImage({ src: beer.imageUrl, alt: beer.name })
+                    }
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                ) : null}
+              </td>
+              <td className="cell-title" data-label="Navn">{beer.name}</td>
+              <td data-label="Bryggeri">{beer.brewery}</td>
+              <td data-label="Favorit (2 point)">
                 <button
                   disabled={submitted}
                   onClick={() => setFavoriteBeerId(beer.id)}
@@ -87,7 +106,7 @@ export default function Vote() {
                   {favoriteBeerId === beer.id ? "Valgt" : "Vælg"}
                 </button>
               </td>
-              <td>
+              <td data-label="Andenplads (1 point)">
                 <button
                   disabled={submitted}
                   onClick={() => setSecondBeerId(beer.id)}
@@ -99,6 +118,7 @@ export default function Vote() {
           ))}
         </tbody>
       </table>
+      </div>
 
       <br />
 
@@ -107,6 +127,12 @@ export default function Vote() {
           Indsend stemmer
         </button>
       )}
+
+      <ImageLightbox
+        src={lightboxImage?.src}
+        alt={lightboxImage?.alt}
+        onClose={() => setLightboxImage(null)}
+      />
     </main>
   );
 }

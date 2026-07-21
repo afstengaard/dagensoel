@@ -20,6 +20,9 @@ export default function AdminDashboard() {
     country: "",
     abv: "",
     submittedBy: "",
+    evening: "",
+    untappdLink: "",
+    imageUrl: "",
   });
 
   useEffect(() => {
@@ -137,6 +140,12 @@ export default function AdminDashboard() {
       return;
     }
 
+    const imageUrl = beer.imageUrl.trim();
+    if (imageUrl && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+      alert("Billed-URL skal starte med http:// eller https://");
+      return;
+    }
+
     try {
       await api.addBeerToEvent(event.id, {
         name,
@@ -144,6 +153,9 @@ export default function AdminDashboard() {
         country,
         abv,
         submittedBy,
+        evening: beer.evening || null,
+        untappdLink: beer.untappdLink.trim() || null,
+        imageUrl: imageUrl || null,
       });
 
       setBeer({
@@ -152,6 +164,9 @@ export default function AdminDashboard() {
         country: "",
         abv: "",
         submittedBy: "",
+        evening: "",
+        untappdLink: "",
+        imageUrl: "",
       });
 
       await reloadEvent();
@@ -231,6 +246,31 @@ export default function AdminDashboard() {
                 value={beer.submittedBy}
                 onChange={(e) =>
                   setBeer({ ...beer, submittedBy: e.target.value })
+                }
+              />
+
+              <select
+                value={beer.evening}
+                onChange={(e) => setBeer({ ...beer, evening: e.target.value })}
+              >
+                <option value="">Vælg aften...</option>
+                <option value="Første aften">Første aften</option>
+                <option value="Anden aften">Anden aften</option>
+              </select>
+
+              <input
+                placeholder="Untappd-link (valgfrit)"
+                value={beer.untappdLink}
+                onChange={(e) =>
+                  setBeer({ ...beer, untappdLink: e.target.value })
+                }
+              />
+
+              <input
+                placeholder="Billed-URL (valgfrit)"
+                value={beer.imageUrl}
+                onChange={(e) =>
+                  setBeer({ ...beer, imageUrl: e.target.value })
                 }
               />
 

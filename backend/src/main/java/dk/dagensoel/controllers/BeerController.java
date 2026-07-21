@@ -109,7 +109,18 @@ public class BeerController {
         beer.setCountry(dto.country);
         beer.setAbv(dto.abv);
         beer.setSubmittedBy(dto.submittedBy);
+        beer.setUntappdLink(dto.untappdLink);
+        beer.setEvening(dto.evening);
         beer.setEvent(event);
+
+        if (dto.imageUrl != null) {
+            String imageUrl = dto.imageUrl.trim();
+            if (!imageUrl.isEmpty() && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                ctx.status(400).result("imageUrl must be a full http(s) URL");
+                return;
+            }
+            beer.setImageUrl(imageUrl.isEmpty() ? null : imageUrl);
+        }
 
         Beer created = beerDAO.create(beer);
         ctx.status(201).json(new BeerDTO(created));

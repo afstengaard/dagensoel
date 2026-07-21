@@ -1,0 +1,53 @@
+.retro-banner {
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-top: 3px solid black;
+  border-bottom: 3px solid black;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif;
+  font-weight: bold;
+  color: black;
+  text-shadow: 1px 1px 0 white;
+  text-align: center;
+  font-size: clamp(0.75rem, 3vw, 1.1rem);
+  line-height: 1.4;
+}
+
+.retro-banner-blink {
+  animation: retro-blink 1s steps(1) infinite;
+}
+
+@keyframes retro-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.retro-banner-marquee-track {
+  display: inline-flex;
+  gap: 4rem;
+  white-space: nowrap;
+  animation: retro-marquee 14s linear infinite;
+}
+
+@keyframes retro-marquee {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 480px) {
+  .retro-banner {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .retro-banner-marquee-track {
+    animation-duration: 10s;
+    gap: 2rem;
+  }
+}

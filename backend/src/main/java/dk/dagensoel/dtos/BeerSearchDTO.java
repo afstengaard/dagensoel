@@ -28,6 +28,7 @@ public class BeerSearchDTO {
     public String untappdLink;
     public String evening;
     public int placement;
+    public int totalPoints;
 
     public Long eventId;
     public String eventName;

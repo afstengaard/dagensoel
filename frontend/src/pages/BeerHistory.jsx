@@ -77,7 +77,9 @@ export default function BeerHistory() {
           <tbody>
             {filteredBeers.map((beer) => (
               <tr key={`${beer.beerId}-${beer.eventId}`}>
-                <td data-label="Placering">{beer.placement}.</td>
+                <td data-label="Placering">
+                  {beer.placement} ({beer.totalPoints} p)
+                </td>
                 <td className="cell-image">
                   {beer.imageUrl ? (
                     <img

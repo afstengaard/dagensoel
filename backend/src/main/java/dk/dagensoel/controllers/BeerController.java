@@ -60,6 +60,7 @@ public class BeerController {
                 .collect(java.util.stream.Collectors.groupingBy(b -> b.getEvent().getId()));
 
         Map<Long, Integer> placementByBeerId = new java.util.HashMap<>();
+        Map<Long, Integer> pointsByBeerId = new java.util.HashMap<>();
 
         for (Long eventId : beersByEvent.keySet()) {
             List<Object[]> results = voteDAO.getResultsForEvent(eventId);
@@ -76,6 +77,7 @@ public class BeerController {
                     previousPoints = totalPoints;
                 }
                 placementByBeerId.put(beerId, placement);
+                pointsByBeerId.put(beerId, totalPoints);
             }
         }
 
@@ -83,6 +85,7 @@ public class BeerController {
                 .map(beer -> {
                     BeerSearchDTO dto = new BeerSearchDTO(beer);
                     dto.placement = placementByBeerId.getOrDefault(beer.getId(), 0);
+                    dto.totalPoints = pointsByBeerId.getOrDefault(beer.getId(), 0);
                     return dto;
                 })
                 .toList();

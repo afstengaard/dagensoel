@@ -5,6 +5,20 @@
   overflow-x: auto;
 }
 
+/* Breaks the table out of #root's max-width so it can use the full
+   viewport width instead of needing horizontal scroll. Used on pages
+   with lots of columns, like the event editor. */
+.table-fullwidth {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
 .results-table {
   width: 100%;
   border-collapse: collapse;

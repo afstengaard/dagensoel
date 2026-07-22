@@ -196,7 +196,7 @@ export default function EditEvent() {
 
       <h2>Øl</h2>
 
-      <div className="table-scroll">
+      <div className="table-scroll table-fullwidth">
         <table className="results-table">
           <thead>
             <tr>

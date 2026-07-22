@@ -11,6 +11,7 @@ import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
 import HeaderMenu from "./components/HeaderMenu";
 import BeerHistory from "./pages/BeerHistory";
+import Stats from "./pages/Stats";
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/event/:code" element={<Event />} />
         <Route path="/event/:code/vote" element={<Vote />} />
         <Route path="/beers" element={<BeerHistory />} />
+        <Route path="/stats" element={<Stats />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/events/create" element={<CreateEvent />} />

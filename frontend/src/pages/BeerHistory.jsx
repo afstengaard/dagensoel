@@ -5,12 +5,32 @@ import ImageLightbox from "../components/ImageLightbox";
 import { BEER_STYLE_CATEGORIES, styleLabel } from "../data/beerStyles";
 import "../styles/responsive-table.css";
 
+function compareBeers(a, b, sortKey) {
+  if (sortKey === "eventDate") {
+    const ay = a.eventDate ?? [0, 0, 0];
+    const by = b.eventDate ?? [0, 0, 0];
+    return (ay[0] - by[0]) || (ay[1] - by[1]) || (ay[2] - by[2]);
+  }
+
+  if (sortKey === "abv" || sortKey === "totalPoints") {
+    return (a[sortKey] ?? 0) - (b[sortKey] ?? 0);
+  }
+
+  if (sortKey === "style") {
+    return styleLabel(a.style).localeCompare(styleLabel(b.style), "da");
+  }
+
+  return String(a[sortKey] ?? "").localeCompare(String(b[sortKey] ?? ""), "da");
+}
+
 export default function BeerHistory() {
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [allBeers, setAllBeers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lightboxImage, setLightboxImage] = useState(null);
+  const [sortKey, setSortKey] = useState("eventDate");
+  const [sortDirection, setSortDirection] = useState("desc");
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -26,6 +46,20 @@ export default function BeerHistory() {
 
     fetchHistory();
   }, []);
+
+  function toggleSort(key) {
+    if (sortKey === key) {
+      setSortDirection((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDirection("asc");
+    }
+  }
+
+  function sortIndicator(key) {
+    if (sortKey !== key) return "";
+    return sortDirection === "asc" ? " ▲" : " ▼";
+  }
 
   const filteredBeers = useMemo(() => {
     const search = query.trim().toLowerCase();
@@ -47,6 +81,11 @@ export default function BeerHistory() {
       return matchesSearch && categoryMatches;
     });
   }, [query, categoryFilter, allBeers]);
+
+  const sortedBeers = useMemo(() => {
+    const sorted = [...filteredBeers].sort((a, b) => compareBeers(a, b, sortKey));
+    return sortDirection === "desc" ? sorted.reverse() : sorted;
+  }, [filteredBeers, sortKey, sortDirection]);
 
   return (
     <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "1rem" }}>
@@ -86,20 +125,36 @@ export default function BeerHistory() {
         <table className="results-table">
           <thead>
             <tr>
-              <th>Placering</th>
+              <th onClick={() => toggleSort("totalPoints")} style={{ cursor: "pointer" }}>
+                Placering{sortIndicator("totalPoints")}
+              </th>
               <th>Billede</th>
-              <th>Øl</th>
-              <th>Bryggeri</th>
-              <th>ABV</th>
-              <th>Stil</th>
-              <th>Aften</th>
+              <th onClick={() => toggleSort("beerName")} style={{ cursor: "pointer" }}>
+                Øl{sortIndicator("beerName")}
+              </th>
+              <th onClick={() => toggleSort("brewery")} style={{ cursor: "pointer" }}>
+                Bryggeri{sortIndicator("brewery")}
+              </th>
+              <th onClick={() => toggleSort("abv")} style={{ cursor: "pointer" }}>
+                ABV{sortIndicator("abv")}
+              </th>
+              <th onClick={() => toggleSort("style")} style={{ cursor: "pointer" }}>
+                Stil{sortIndicator("style")}
+              </th>
+              <th onClick={() => toggleSort("evening")} style={{ cursor: "pointer" }}>
+                Aften{sortIndicator("evening")}
+              </th>
               <th>Untappd</th>
-              <th>Indsendt af</th>
-              <th>Event</th>
+              <th onClick={() => toggleSort("submittedBy")} style={{ cursor: "pointer" }}>
+                Indsendt af{sortIndicator("submittedBy")}
+              </th>
+              <th onClick={() => toggleSort("eventDate")} style={{ cursor: "pointer" }}>
+                Event{sortIndicator("eventDate")}
+              </th>
             </tr>
           </thead>
           <tbody>
-            {filteredBeers.map((beer) => (
+            {sortedBeers.map((beer) => (
               <tr key={`${beer.beerId}-${beer.eventId}`}>
                 <td data-label="Placering">
                   {beer.pointsUnknown
@@ -141,7 +196,7 @@ export default function BeerHistory() {
               </tr>
             ))}
 
-            {filteredBeers.length === 0 && (
+            {sortedBeers.length === 0 && (
               <tr>
                 <td
                   colSpan="10"

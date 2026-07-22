@@ -43,6 +43,10 @@ export default function HeaderMenu() {
               Øl
             </NavLink>
 
+            <NavLink to="/stats" style={styles.link}>
+              Statistik
+            </NavLink>
+
             {loggedIn ? (
               <NavLink to="/admin" style={styles.link}>
                 Admin-dashboard

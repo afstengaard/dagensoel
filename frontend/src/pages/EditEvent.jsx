@@ -65,43 +65,75 @@ export default function EditEvent() {
     );
   }
 
+  function buildBeerPayload(beer) {
+    const abv = Number(beer.abv);
+    const totalPoints = Number(beer.totalPoints);
+    const label = beer.name?.trim() || "(uden navn)";
+
+    if (!beer.name?.trim() || !beer.brewery?.trim() || !beer.submittedBy?.trim()) {
+      throw new Error(`"${label}": navn, bryggeri og indsendt af skal udfyldes`);
+    }
+    if (isNaN(abv) || abv < 0) {
+      throw new Error(`"${label}": ABV skal være et gyldigt tal`);
+    }
+    if (isNaN(totalPoints)) {
+      throw new Error(`"${label}": point skal være et tal`);
+    }
+
+    return {
+      name: beer.name.trim(),
+      brewery: beer.brewery.trim(),
+      country: beer.country?.trim() || "",
+      abv,
+      submittedBy: beer.submittedBy.trim(),
+      evening: beer.evening || null,
+      untappdLink: beer.untappdLink?.trim() || null,
+      imageUrl: beer.imageUrl?.trim() || null,
+      style: beer.style || null,
+      totalPoints,
+    };
+  }
+
   async function saveBeer(index) {
     const beer = beers[index];
 
-    const abv = Number(beer.abv);
-    const totalPoints = Number(beer.totalPoints);
-
-    if (!beer.name?.trim() || !beer.brewery?.trim() || !beer.submittedBy?.trim()) {
-      alert("Navn, bryggeri og indsendt af skal udfyldes");
-      return;
-    }
-    if (isNaN(abv) || abv < 0) {
-      alert("ABV skal være et gyldigt tal");
-      return;
-    }
-    if (isNaN(totalPoints)) {
-      alert("Point skal være et tal");
-      return;
-    }
-
     try {
-      const updated = await api.updateBeer(beer.id, {
-        name: beer.name.trim(),
-        brewery: beer.brewery.trim(),
-        country: beer.country?.trim() || "",
-        abv,
-        submittedBy: beer.submittedBy.trim(),
-        evening: beer.evening || null,
-        untappdLink: beer.untappdLink?.trim() || null,
-        imageUrl: beer.imageUrl?.trim() || null,
-        style: beer.style || null,
-        totalPoints,
-      });
-
+      const payload = buildBeerPayload(beer);
+      const updated = await api.updateBeer(beer.id, payload);
       updateBeerField(index, "totalPoints", String(updated.totalPoints));
       alert(`"${beer.name}" gemt`);
     } catch (err) {
       alert(`Kunne ikke gemme øl: ${err.message}`);
+    }
+  }
+
+  const [savingAll, setSavingAll] = useState(false);
+
+  async function saveAllBeers() {
+    setSavingAll(true);
+
+    const errors = [];
+    const updatedBeers = [...beers];
+
+    for (let i = 0; i < beers.length; i++) {
+      try {
+        const payload = buildBeerPayload(beers[i]);
+        const updated = await api.updateBeer(beers[i].id, payload);
+        updatedBeers[i] = { ...updatedBeers[i], totalPoints: String(updated.totalPoints) };
+      } catch (err) {
+        errors.push(err.message);
+      }
+    }
+
+    setBeers(updatedBeers);
+    setSavingAll(false);
+
+    if (errors.length === 0) {
+      alert(`Alle ${beers.length} øl blev gemt.`);
+    } else {
+      alert(
+        `${beers.length - errors.length} af ${beers.length} øl blev gemt. Fejl:\n\n${errors.join("\n")}`
+      );
     }
   }
 
@@ -194,7 +226,12 @@ export default function EditEvent() {
         <button onClick={saveEventDetails}>Gem event</button>
       </div>
 
-      <h2>Øl</h2>
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <h2>Øl</h2>
+        <button onClick={saveAllBeers} disabled={savingAll || beers.length === 0}>
+          {savingAll ? "Gemmer…" : "Gem alle øl"}
+        </button>
+      </div>
 
       <div className="table-scroll table-fullwidth">
         <table className="results-table">

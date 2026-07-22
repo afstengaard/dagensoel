@@ -61,22 +61,33 @@ public class BeerController {
 
         Map<Long, Integer> placementByBeerId = new java.util.HashMap<>();
         Map<Long, Integer> pointsByBeerId = new java.util.HashMap<>();
+        java.util.Set<Long> eventsWithUnknownPoints = new java.util.HashSet<>();
 
         for (Long eventId : beersByEvent.keySet()) {
             List<Object[]> results = voteDAO.getResultsForEvent(eventId);
+
+            boolean pointsUnknown = !results.isEmpty() && results.stream()
+                    .allMatch(row -> ((Number) row[2]).intValue() == 0);
+            if (pointsUnknown) {
+                eventsWithUnknownPoints.add(eventId);
+            }
+
             // Already ordered by totalPoints DESC - same standard
-            // competition ranking as the per-event results page.
+            // competition ranking as the per-event results page. Skipped
+            // when points are unknown, since there's nothing real to rank.
             int placement = 0;
             int previousPoints = Integer.MIN_VALUE;
             for (int i = 0; i < results.size(); i++) {
                 Object[] row = results.get(i);
                 Long beerId = ((Number) row[0]).longValue();
                 int totalPoints = ((Number) row[2]).intValue();
-                if (totalPoints != previousPoints) {
-                    placement = i + 1;
-                    previousPoints = totalPoints;
+                if (!pointsUnknown) {
+                    if (totalPoints != previousPoints) {
+                        placement = i + 1;
+                        previousPoints = totalPoints;
+                    }
+                    placementByBeerId.put(beerId, placement);
                 }
-                placementByBeerId.put(beerId, placement);
                 pointsByBeerId.put(beerId, totalPoints);
             }
         }
@@ -84,6 +95,7 @@ public class BeerController {
         List<BeerSearchDTO> dtos = beers.stream()
                 .map(beer -> {
                     BeerSearchDTO dto = new BeerSearchDTO(beer);
+                    dto.pointsUnknown = eventsWithUnknownPoints.contains(beer.getEvent().getId());
                     dto.placement = placementByBeerId.getOrDefault(beer.getId(), 0);
                     dto.totalPoints = pointsByBeerId.getOrDefault(beer.getId(), 0);
                     return dto;

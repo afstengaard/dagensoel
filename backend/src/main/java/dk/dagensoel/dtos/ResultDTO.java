@@ -34,6 +34,15 @@ public class ResultDTO {
      */
     public int placement;
 
+    /**
+     * True when every beer in this event has 0 total points - meaning we
+     * simply never recorded results for that year, rather than every
+     * beer genuinely tying at 0. In that case there's no real winner or
+     * ranking to show, and the frontend should display "Ukendt" instead
+     * of a beer name or a "(0 p)" placement.
+     */
+    public boolean pointsUnknown;
+
     public ResultDTO(
             Long eventId,
             String eventName,

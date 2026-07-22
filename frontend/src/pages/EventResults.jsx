@@ -93,7 +93,7 @@ export default function EventResults() {
                   ) : null}
                 </td>
                 <td data-label="Indsendt af">{r.submittedBy}</td>
-                <td data-label="Point">{r.totalPoints}</td>
+                <td data-label="Point">{r.pointsUnknown ? "Ukendt" : r.totalPoints}</td>
                 {isAdmin && (
                   <td data-label="Billed-URL">
                     {editingId === r.beerId ? (

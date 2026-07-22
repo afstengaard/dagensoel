@@ -102,7 +102,9 @@ export default function BeerHistory() {
             {filteredBeers.map((beer) => (
               <tr key={`${beer.beerId}-${beer.eventId}`}>
                 <td data-label="Placering">
-                  {beer.placement} ({beer.totalPoints} p)
+                  {beer.pointsUnknown
+                    ? "Ukendt"
+                    : `${beer.placement} (${beer.totalPoints} p)`}
                 </td>
                 <td className="cell-image">
                   {beer.imageUrl ? (

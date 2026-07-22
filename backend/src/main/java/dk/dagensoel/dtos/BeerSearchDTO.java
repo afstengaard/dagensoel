@@ -30,6 +30,7 @@ public class BeerSearchDTO {
     public String style;
     public int placement;
     public int totalPoints;
+    public boolean pointsUnknown;
 
     public Long eventId;
     public String eventName;

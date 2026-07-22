@@ -222,15 +222,23 @@ public class EventController {
         // Results already come back ordered by totalPoints DESC from the
         // query - assign 1-based placements here, with tied beers sharing
         // a placement (e.g. two 2nd-place beers, then the next is 4th).
-        int placement = 0;
-        int previousPoints = Integer.MIN_VALUE;
-        for (int i = 0; i < results.size(); i++) {
-            ResultDTO dto = results.get(i);
-            if (dto.totalPoints != previousPoints) {
-                placement = i + 1;
-                previousPoints = dto.totalPoints;
+        // Exception: if every beer has 0 points, we never recorded real
+        // results for this event, so there's no ranking to show at all.
+        boolean pointsUnknown = results.stream().allMatch(r -> r.totalPoints == 0);
+
+        if (pointsUnknown) {
+            results.forEach(dto -> dto.pointsUnknown = true);
+        } else {
+            int placement = 0;
+            int previousPoints = Integer.MIN_VALUE;
+            for (int i = 0; i < results.size(); i++) {
+                ResultDTO dto = results.get(i);
+                if (dto.totalPoints != previousPoints) {
+                    placement = i + 1;
+                    previousPoints = dto.totalPoints;
+                }
+                dto.placement = placement;
             }
-            dto.placement = placement;
         }
 
         ctx.json(results);
@@ -249,6 +257,29 @@ public class EventController {
 
                     if (results.isEmpty()) {
                         return null;
+                    }
+
+                    boolean pointsUnknown = results.stream()
+                            .allMatch(row -> ((Number) row[2]).intValue() == 0);
+
+                    if (pointsUnknown) {
+                        ResultDTO dto = new ResultDTO(
+                                event.getId(),
+                                event.getName(),
+                                event.getStartDate(),
+                                null,
+                                "Ukendt",
+                                null,
+                                0,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                0
+                        );
+                        dto.pointsUnknown = true;
+                        return dto;
                     }
 
                     Object[] winner = results.get(0);
